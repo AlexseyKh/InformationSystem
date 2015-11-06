@@ -7,6 +7,7 @@ package informationsystem;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import javax.swing.*;
 
 /**
@@ -22,6 +23,9 @@ public class Frame1 extends JFrame {
     JPanel panel;
     JPanel panelTree;
     JPanel panelInfo;
+    ImagePanel employeeImg;
+    JPanel employeeInfo;
+    
     
     public Frame1() {
         
@@ -35,8 +39,16 @@ public class Frame1 extends JFrame {
         menuBar.add(menuFile);
         //Интерфейс
         panel = new JPanel(new GridLayout(1,2));
+        
         panelTree = new JPanel();
-        panelInfo = new JPanel();        
+        panelTree.setBackground(Color.red);
+        panelInfo = new JPanel(new GridLayout(2,1)); 
+        employeeImg = new ImagePanel();        
+        employeeImg.setImage("src\\img\\images.jpg");
+        employeeInfo = new JPanel();
+        
+        panelInfo.add(employeeImg);
+        panelInfo.add(employeeInfo);
         panel.add(panelTree);
         panel.add(panelInfo);
         
