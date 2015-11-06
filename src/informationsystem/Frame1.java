@@ -41,7 +41,7 @@ public class Frame1 extends JFrame {
         panel = new JPanel(new GridLayout(1,2));
         
         panelTree = new JPanel();
-        panelTree.setBackground(Color.red);
+        panelTree.setBackground(Color.WHITE);
         panelInfo = new JPanel(new GridLayout(2,1)); 
         employeeImg = new ImagePanel();        
         employeeImg.setImage("src\\img\\Nikita_Dzhigurda.jpg");
