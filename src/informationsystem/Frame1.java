@@ -44,7 +44,7 @@ public class Frame1 extends JFrame {
         panelTree.setBackground(Color.red);
         panelInfo = new JPanel(new GridLayout(2,1)); 
         employeeImg = new ImagePanel();        
-        employeeImg.setImage("src\\img\\images.jpg");
+        employeeImg.setImage("src\\img\\Nikita_Dzhigurda.jpg");
         employeeInfo = new JPanel();
         
         panelInfo.add(employeeImg);

@@ -37,8 +37,19 @@ public class ImagePanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        if(image != null){
-            g.drawImage(image, 150, 0, 100, 150, null);
+        if(image != null){            
+            int w = image.getWidth(null);
+            int h = image.getHeight(null);
+            double k = 1.0;
+            if(w >= h){
+                k = (double)this.getWidth() / w;
+            }
+            else{
+                k = (double)this.getHeight()/h;
+            }
+            w*=k;
+            h*=k;        
+            g.drawImage(image,(this.getWidth() - w)/2,(this.getHeight() - h)/2 , w, h, null);
         }
     }
 }
