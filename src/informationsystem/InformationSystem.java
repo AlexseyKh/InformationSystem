@@ -10,14 +10,9 @@ package informationsystem;
  * @author Алексей
  */
 public class InformationSystem {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-        int f;
-        
+   
+    public static void main(String args[]){
+        new Frame1();
     }
     
 }
