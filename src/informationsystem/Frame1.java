@@ -104,9 +104,11 @@ public class Frame1 extends JFrame {
                          if (tp != null && tp.getPathCount() == 2 && me.getButton() == 3){
                            popup = new JPopupMenu();
                            JMenuItem delete = new JMenuItem("Delete");
-                           JMenuItem show = new JMenuItem("Show");     
+                           JMenuItem show = new JMenuItem("Show"); 
+                           JMenuItem add = new JMenuItem("Add"); 
                            popup.add(show);
-                           popup.add(delete);                           
+                           popup.add(delete);
+                           popup.add(add);
                            popup.show(mainFrame, me.getX()  + 25, me.getY() + 50);
                            show.addActionListener(new ActionListener() {
 
@@ -123,7 +125,14 @@ public class Frame1 extends JFrame {
                                //удаляю отдел
                            }   
                                }
-                           });         
+                           });   
+                           delete.addActionListener(new ActionListener() {
+
+                               @Override
+                               public void actionPerformed(ActionEvent e) {
+                                   //добавляю сотрудника
+                               }
+                           });
                          }
                                        
                   }
