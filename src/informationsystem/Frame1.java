@@ -5,10 +5,15 @@
  */
 package informationsystem;
 
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Random;
 import javax.swing.*;
+import javax.swing.tree.*;
+
 
 /**
  *
@@ -16,20 +21,18 @@ import javax.swing.*;
  */
 public class Frame1 extends JFrame {
     
+    JPanel mainPanel;
     JMenuBar menuBar;
     JMenu menuFile;
     JMenuItem companyUpItem;
     JMenuItem companyDownItem;
-    JPanel panel;
-    JPanel panelTree;
-    JPanel panelInfo;
-    ImagePanel employeeImg;
-    JPanel employeeInfo;
-    
-    
+    DefaultMutableTreeNode level0;
+    JTree jt;
+    JFrame mainFrame = this;
+    JScrollPane jsp;
+
     public Frame1() {
         
-        //Меню бар
         menuBar = new JMenuBar();
         menuFile = new JMenu("File");
         companyUpItem = new JMenuItem("Import XML..");
@@ -37,29 +40,65 @@ public class Frame1 extends JFrame {
         menuFile.add(companyUpItem);
         menuFile.add(companyDownItem);
         menuBar.add(menuFile);
-        //Интерфейс
-        panel = new JPanel(new GridLayout(1,2));
         
-        panelTree = new JPanel();
-        panelTree.setBackground(Color.WHITE);
-        panelInfo = new JPanel(new GridLayout(2,1)); 
-        employeeImg = new ImagePanel();        
-        employeeImg.setImage("src\\img\\Nikita_Dzhigurda.jpg");
-        employeeInfo = new JPanel();
+        //tree        
+       
         
-        panelInfo.add(employeeImg);
-        panelInfo.add(employeeInfo);
-        panel.add(panelTree);
-        panel.add(panelInfo);
-        
-        //Общая компановка
-        this.add(panel);
         this.setJMenuBar(menuBar);
-        this.setBounds(300,300,800,400);        
+        this.setBounds(100,100,400,400);        
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);          
         this.setTitle("Information System");
         this.setVisible(true);
-    }
+        
+        companyUpItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Random r = new Random();
+                int count = r.nextInt(10); 
+                if(jt != null){
+                mainFrame.remove(jt);
+                mainFrame.revalidate();
+                mainFrame.repaint();
+                }                
+                level0 =  new DefaultMutableTreeNode("Название компании");               
+                jt = new JTree(level0);
+                DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[count];
+                for(int i = 0; i < departments.length; i++){
+                    departments[i] = new DefaultMutableTreeNode("Отдел №" + i);                    
+                        for(int j = 0; j < count / 2; j++){
+                            DefaultMutableTreeNode employee = new DefaultMutableTreeNode("Сотрудник №" + j);                            
+                            departments[i].add(employee);
+                        }
+                    level0.add(departments[i]);
+                }
+                
+                jt.addMouseListener(new MouseAdapter() {
+                    boolean is = false;
+                    @Override
+                    public void mouseClicked(MouseEvent me) {
+                       TreePath tp = jt.getPathForLocation(me.getX(), me.getY());
+                        if (tp != null && tp.getPathCount() == 3 && me.getClickCount() == 2){
+                           new Frame2(tp.getLastPathComponent().toString());                            
+                        }                     
+                                       
+                  }
+                });
+                int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+                int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+                jsp = new JScrollPane(jt, v, h);     
+                mainFrame.getContentPane().add(jt);                
+                mainFrame.setVisible(true);
+                
+            }
+        });
+        
+        
+      }
+ }
+
     
-   
-}
+    
+    
+    
+    
+
