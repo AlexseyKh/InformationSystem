@@ -18,7 +18,9 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement
 public class Model {
 
+    @XmlElement
     private ArrayList<Department> departments;
+    @XmlElement
     private ArrayList<Employee> employees;
 
     public Model(ArrayList<Department> departments, ArrayList<Employee> Employees) {
@@ -145,7 +147,7 @@ public class Model {
 
     public boolean updateDepartment(String name, String newName, int newDirectorID) {
         if ((newName == name || !suchDepartmentExist(newName))
-                && (suchEmployeeExist(newDirectorID) || newDirectorID == 0)) {
+                && (newDirectorID == 0) || suchEmployeeExist(newDirectorID)) {
             for (int i = 0; i < departments.size(); i++) {
                 if (departments.get(i).getName() == name) {
                     departments.set(i, new Department(newName, newDirectorID));
@@ -364,7 +366,7 @@ public class Model {
     private boolean suchEmployeeExist(int id) {
         for (Employee employee : employees) {
             if (employee.getId() == id) {
-                return false;
+                return true;
             }
         }
         return false;
