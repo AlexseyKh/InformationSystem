@@ -6,6 +6,7 @@
 package informationsystem;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,7 @@ public class Frame2 extends JFrame {
     JPanel panelInfo;
     ImagePanel employeeImg;
     JPanel employeeInfo;
+    Font f = new Font("TimesRoman", Font.BOLD,15); 
     JLabel lastNameLabel = new JLabel("Last name");
     JLabel firstNameLabel = new JLabel("First name");
     JLabel functionLabel = new JLabel("Function");
@@ -42,18 +44,28 @@ public class Frame2 extends JFrame {
         employeeImg = new ImagePanel();        
         employeeImg.setImage("src\\img\\Nikita_Dzhigurda.jpg");
         employeeInfo = new JPanel(new GridLayout(6,2));  
+        lastNameLabel.setFont(f);
         employeeInfo.add(lastNameLabel);
-        employeeInfo.add(lastNameText);
+        lastNameText.setFont(f);
+        employeeInfo.add(lastNameText); 
+        firstNameLabel.setFont(f);
         employeeInfo.add(firstNameLabel);
+        firstNameText.setFont(f);
         employeeInfo.add(firstNameText);
+        functionLabel.setFont(f);
         employeeInfo.add(functionLabel);
+        functionText.setFont(f);
         employeeInfo.add(functionText);
+        departmentLabel.setFont(f);
         employeeInfo.add(departmentLabel);
+        departmentText.setFont(f);
         employeeInfo.add(departmentText);
+        salaryLabel.setFont(f);
         employeeInfo.add(salaryLabel);
+        salaryText.setFont(f);
         employeeInfo.add(salaryText);
-        employeeInfo.add(saveButton);
         employeeInfo.add(editButton);
+        employeeInfo.add(saveButton);        
         setTextEditable(false);
         panelInfo.add(employeeImg);
         panelInfo.add(employeeInfo); 
