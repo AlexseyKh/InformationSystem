@@ -5,17 +5,26 @@
  */
 package informationsystem.model.dataClasses;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  *
  * @author Игорь
  */
+
 public class Employee {
 
+    @XmlElement
     private int id;
+    @XmlElement
     private String firstName;
+    @XmlElement
     private String secondName;
+    @XmlElement
     private String function;
+    @XmlElement
     private String department;
+    @XmlElement
     private int salary;
 
     public Employee() {
