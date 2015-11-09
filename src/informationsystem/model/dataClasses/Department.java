@@ -5,13 +5,17 @@
  */
 package informationsystem.model.dataClasses;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  *
  * @author Игорь
  */
 public class Department {
 
+    @XmlElement
     private String name;
+    @XmlElement
     private int directorID;
 
     public Department() {
