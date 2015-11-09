@@ -14,26 +14,28 @@ public class Employee {
     private int id;
     private String firstName;
     private String secondName;
-    private Department department;
-    private String number;
+    private String function;
+    private String department;
     private int salary;
 
     public Employee() {
     }
 
-    public Employee(int id, String firstName, String secondName, Department department, String number, int salary) {
+    public Employee(int id, String firstName, String secondName, String function, String department, int salary) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.department = department;
-        this.number = number;
+        this.function = function;
         this.salary = salary;
     }
 
     @Override
     public String toString() {
-        return "Employee{" + "id=" + getId() + ", firstName=" + getFirstName() + ", secondName=" + getSecondName() + ", department=" + getDepartment() + ", number=" + getNumber() + ", salary=" + getSalary() + '}';
+        return "Employee{" + "id=" + id + ", firstName=" + firstName + ", secondName=" + secondName + ", function=" + function + ", department=" + department + ", salary=" + salary + '}';
     }
+
+   
 
     /**
      * @return the id
@@ -59,15 +61,15 @@ public class Employee {
     /**
      * @return the department
      */
-    public Department getDepartment() {
+    public String getDepartment() {
         return department;
     }
 
     /**
-     * @return the number
+     * @return the function
      */
-    public String getNumber() {
-        return number;
+    public String getFunction() {
+        return function;
     }
 
     /**
@@ -76,9 +78,5 @@ public class Employee {
     public int getSalary() {
         return salary;
     }
-
-    
-
- 
 
 }
