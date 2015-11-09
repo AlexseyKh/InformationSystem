@@ -15,4 +15,12 @@ public class InformationSystem {
     public static void main(String args[]){
         new Frame1();
     }
+<<<<<<< HEAD
 }
+=======
+    
+}
+
+
+
+>>>>>>> refs/remotes/origin/master
