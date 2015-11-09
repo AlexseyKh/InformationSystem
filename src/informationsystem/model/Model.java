@@ -45,8 +45,7 @@ public class Model {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
                 is.close();
 
@@ -62,7 +61,7 @@ public class Model {
         OutputStream os = null;
         try {
             JAXBContext jc = JAXBContext.newInstance(Model.class);
-            Marshaller m = jc.createMarshaller();     
+            Marshaller m = jc.createMarshaller();
             os = new FileOutputStream(fileName);
             m.marshal(this, os);
             os.close();
@@ -82,13 +81,23 @@ public class Model {
 
             }
         }
-       
+
     }
 
     //
-    //Методы работы с отделом. Название отдела - ключ.
+    //Методы работы с отделом.
+    //
+    //Название отдела - ключ.
     //Если id == 0, то отдел без начальника.
     //
+    public int departmentCount() {
+        return departments.size();
+    }
+
+    public Department getDepartment(int index) {
+        return departments.get(index);
+    }
+
     public Department getDepartment(String name) {
         for (int i = 0; i < departments.size(); i++) {
             if (departments.get(i).getName() == name) {
@@ -106,12 +115,30 @@ public class Model {
         return false;
     }
 
+    public boolean deleteDepartment(int index) {
+        if (index >= 0 && index < departmentCount()) {
+            departments.remove(index);
+            return true;
+        }
+        return false;
+    }
+
     public boolean deleteDepartment(String name) {
         for (int i = 0; i < departments.size(); i++) {
             if (departments.get(i).getName() == name) {
                 departments.remove(i);
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean updateDepartment(int index, String newName, int newDirectorID) {
+        if ((index >= 0 && index < departmentCount())
+                && (newName == getDepartment(index).getName() || !suchDepartmentExist(newName))
+                && (suchEmployeeExist(newDirectorID) || newDirectorID == 0)) {
+            departments.set(index, new Department(newName, newDirectorID));
+            return true;
         }
         return false;
     }
@@ -130,9 +157,42 @@ public class Model {
     }
 
     //
-    //Методы работы с сотрудником. ID сотрудника - ключ.
-    //ID может быть только положительным.
+    //Методы работы с сотрудником.
     //
+    //Поле department не может быть пустым.
+    //ID сотрудника - ключ.
+    //ID может быть только положительным.
+    //  
+    public int employeeCount() {
+        return employees.size();
+    }
+
+    public int employeeCount(int departmentIndex) {
+        int count = 0;
+        if (departmentIndex >= 0 && departmentIndex < departmentCount()) {
+
+            for (int i = 0; i < employees.size(); i++) {
+                if (employees.get(i).getDepartment() == getDepartment(departmentIndex).getName()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int employeeCount(String departmentName) {
+        int count = 0;
+        if (suchDepartmentExist(departmentName)) {
+
+            for (int i = 0; i < employees.size(); i++) {
+                if (employees.get(i).getDepartment() == departmentName) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public Employee getEmployee(int id) {
         for (int i = 0; i < employees.size(); i++) {
             if (employees.get(i).getId() == id) {
@@ -142,10 +202,40 @@ public class Model {
         return null;
     }
 
+    public Employee getEmployee(int departmentIndex, int employeeIndex) {
+        if (departmentIndex >= 0 && departmentIndex < departmentCount()) {
+            int i = -1;
+            for (Employee emp : employees) {
+                if (getDepartment(departmentIndex).getName() == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        return emp;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Employee getEmployee(String departmentName, int employeeIndex) {
+        if (suchDepartmentExist(departmentName)) {
+            int i = -1;
+            for (Employee emp : employees) {
+                if (departmentName == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        return emp;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean addEmployee(int id, String firstName, String secondName,
-            Department department, String number, int salary) {
-        if (id > 0 && !suchEmployeeExist(id)) {
-            employees.add(new Employee(id, firstName, secondName, department, number, salary));
+            String function, String department, int salary) {
+        if (id > 0 && !suchEmployeeExist(id) && suchDepartmentExist(department)) {
+            employees.add(new Employee(id, firstName, secondName, function, department, salary));
             return true;
         }
         return false;
@@ -166,14 +256,93 @@ public class Model {
         return false;
     }
 
+    public boolean deleteEmployee(int departmentIndex, int employeeIndex) {
+        if (departmentIndex >= 0 && departmentIndex < departmentCount()) {
+            int i = -1;
+            int j = -1;
+            for (Employee emp : employees) {
+                j++;
+                if (getDepartment(departmentIndex).getName() == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        employees.remove(j);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean deleteEmployee(String departmentName, int employeeIndex) {
+        if (suchDepartmentExist(departmentName)) {
+            int i = -1;
+            int j = -1;
+            for (Employee emp : employees) {
+                j++;
+                if (departmentName == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        employees.remove(j);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean updateEmployee(int id, int newId, String newFirstName, String newSecondName,
-            Department newDepartment, String newNumber, int newSalary) {
-        if (newId == id || newId > 0 && !suchEmployeeExist(newId)) {
+            String newFunction, String newDepartment, int newSalary) {
+        if (newId == id || newId > 0 && !suchEmployeeExist(newId)
+                && suchDepartmentExist(newDepartment)) {
             for (int i = 0; i < employees.size(); i++) {
                 if (employees.get(i).getId() == id) {
                     employees.set(i, new Employee(newId, newFirstName, newSecondName,
-                            newDepartment, newNumber, newSalary));
+                            newFunction, newDepartment, newSalary));
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(int departmentIndex, int employeeIndex,
+            int newId, String newFirstName, String newSecondName,
+            String newFunction, String newDepartment, int newSalary) {
+        if (newId > 0 && !suchEmployeeExist(newId) && suchDepartmentExist(newDepartment)) {
+            int i = -1;
+            int j = -1;
+            for (Employee emp : employees) {
+                j++;
+                if (getDepartment(departmentIndex).getName() == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        employees.set(j, new Employee(newId, newFirstName, newSecondName,
+                                newFunction, newDepartment, newSalary));
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(String departmentName, int employeeIndex,
+            int newId, String newFirstName, String newSecondName,
+            String newFunction, String newDepartment, int newSalary) {
+        if (newId > 0 && !suchEmployeeExist(newId) && suchDepartmentExist(newDepartment)) {
+            int i = -1;
+            int j = -1;
+            for (Employee emp : employees) {
+                j++;
+                if (departmentName == emp.getDepartment()) {
+                    i++;
+                    if (i == employeeIndex) {
+                        employees.set(j, new Employee(newId, newFirstName, newSecondName,
+                                newFunction, newDepartment, newSalary));
+                        return true;
+                    }
                 }
             }
         }
@@ -186,10 +355,10 @@ public class Model {
     private boolean suchDepartmentExist(String name) {
         for (Department department : departments) {
             if (department.getName() == name) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private boolean suchEmployeeExist(int id) {
@@ -198,7 +367,7 @@ public class Model {
                 return false;
             }
         }
-        return true;
+        return false;
     }
 
 }
