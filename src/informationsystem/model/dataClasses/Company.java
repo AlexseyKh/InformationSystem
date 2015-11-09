@@ -40,7 +40,6 @@ public class Company {
             Company m = (Company) um.unmarshal(is);
             this.departments = m.departments;
             this.employees = m.employees;
-            is.close();
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -66,7 +65,6 @@ public class Company {
             Marshaller m = jc.createMarshaller();
             os = new FileOutputStream(fileName);
             m.marshal(this, os);
-            os.close();
         } catch (JAXBException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
