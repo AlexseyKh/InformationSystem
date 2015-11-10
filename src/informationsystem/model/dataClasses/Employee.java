@@ -6,51 +6,58 @@
 package informationsystem.model.dataClasses;
 
 import javax.xml.bind.annotation.XmlElement;
+import informationsystem.exceptions.*;
 
 /**
  *
  * @author Игорь
  */
-
 public class Employee {
 
     @XmlElement
-    private int id;
-    @XmlElement
+    private int identificator;
+
     private String firstName;
-    @XmlElement
+
     private String secondName;
-    @XmlElement
+
     private String function;
-    @XmlElement
-    private String department;
-    @XmlElement
+
     private int salary;
+
+    Department parentDepartment;
 
     public Employee() {
     }
 
-    public Employee(int id, String firstName, String secondName, String function, String department, int salary) {
-        this.id = id;
+    public Employee(int id, String firstName, String secondName, String function, int salary, Department parentDepartment) {
+        this.identificator = id;
         this.firstName = firstName;
         this.secondName = secondName;
-        this.department = department;
         this.function = function;
         this.salary = salary;
+        this.parentDepartment = parentDepartment;
     }
 
     @Override
     public String toString() {
-        return "Employee{" + "id=" + id + ", firstName=" + firstName + ", secondName=" + secondName + ", function=" + function + ", department=" + department + ", salary=" + salary + '}';
+        return "Employee{" + "id=" + getId() + ", firstName=" + getFirstName() + ", secondName=" + getSecondName() + ", function=" + getFunction() + ", salary=" + getSalary() + '}';
     }
 
-   
-
-    /**
-     * @return the id
-     */
     public int getId() {
-        return id;
+        return identificator;
+    }
+
+    public void setId(int id)
+            throws EmployeeWithSuchIdExist, UncorrectId {
+        if (id <= 0) {
+            throw new UncorrectId();
+        }
+        if (this.identificator != id && parentDepartment.getParentCompany().suchEmployeeExist(id)) {
+            throw new EmployeeWithSuchIdExist();
+        }
+        this.identificator = id;
+
     }
 
     /**
@@ -61,6 +68,13 @@ public class Employee {
     }
 
     /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
      * @return the secondName
      */
     public String getSecondName() {
@@ -68,10 +82,10 @@ public class Employee {
     }
 
     /**
-     * @return the department
+     * @param secondName the secondName to set
      */
-    public String getDepartment() {
-        return department;
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
     }
 
     /**
@@ -82,10 +96,24 @@ public class Employee {
     }
 
     /**
+     * @param function the function to set
+     */
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    /**
      * @return the salary
      */
     public int getSalary() {
         return salary;
+    }
+
+    /**
+     * @param salary the salary to set
+     */
+    public void setSalary(int salary) {
+        this.salary = salary;
     }
 
 }
