@@ -5,6 +5,7 @@
  */
 package informationsystem;
 
+import informationsystem.exceptions.*;
 import informationsystem.model.dataClasses.Company;
 import java.util.ArrayList;
 
@@ -18,84 +19,95 @@ public class InformationSystem {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Company company = new Company(new ArrayList<>());
+        try {
 
-//        Company model = new Company(new ArrayList<>(), new ArrayList<>());
-//
-//        model.addDepartment("Programmers", 0);
-//        model.addEmployee(1, "Georg", "Shultc", "01", "Programmers", 111);
-//        model.addEmployee(2, "Georg", "Shultc", "02", "Programmers", 111);
-//
-//        model.addDepartment("Designers", 0);
-//        model.addEmployee(3, "Georg", "Shultc", "02", "Designers", 222);
-//        model.addEmployee(4, "Georg", "Shultc", "04", "Designers", 222);
-//        model.addEmployee(5, "Georg", "Shultc", "05", "Designers", 222);
-//        model.addEmployee(6, "Georg", "Shultc", "06", "Designers", 222);
-//        model.addEmployee(7, "Georg", "Shultc", "07", "Designers", 222);
-//        model.addEmployee(8, "Georg", "Shultc", "08", "Designers", 222);
-//        model.addEmployee(11, "Georg", "Shultc", "11", "Designers", 222);
-//
-//        model.addDepartment("Testers", 0);
-//        model.addEmployee(9, "Georg", "Shultc", "09", "Testers", 333);
-//        model.addEmployee(10, "Georg", "Shultc", "10", "Testers", 333);
-//        model.addEmployee(12, "Georg", "Shultc", "12", "Testers", 333);
-//
-//        model.addDepartment("Directors", 0);
-//        model.addEmployee(13, "Georg", "Shultc", "13", "Directors", 444);
-//        
-//        model.updateDepartment("Testers", "Testers", 13);
-//        model.updateDepartment("Programmers", "Programmers", 13);
-//
-//        System.out.println("Вывод информации о фирме:");
-//        for (int i = 0; i < model.departmentCount(); i++) {
-//            System.out.println(model.getDepartment(i).toString());
-//            for (int j = 0; j < model.employeeCount(i); j++) {
-//                System.out.println(model.getEmployee(i, j).toString());
-//            }
-//        }
-//        
-//        model.saveDataXML("data.xml");
-//        
-//        for (int i = 0; i < model.departmentCount(); i++) {
-//            for (int j = 0; j < model.employeeCount(i); j++) {
-//                if(model.getEmployee(i, j).getId()%2 == 0){
-//                    model.deleteEmployee(i, j);
-//                }
-//            }
-//        }
-//        
-//        System.out.println("\nВывод информации о фирме:");
-//        for (int i = 0; i < model.departmentCount(); i++) {
-//            System.out.println(model.getDepartment(i).toString());
-//            for (int j = 0; j < model.employeeCount(i); j++) {
-//                System.out.println(model.getEmployee(i, j).toString());
-//            }
-//        }
+            company.addDepartment("Programmers", 0);
+            company.getDepartment(0).addEmployee(1, "Georg", "Shultc", "01", 111);
+            company.getDepartment(0).addEmployee(2, "Georg", "Shultc", "02", 111);
 
-        Company model = new Company("data.xml");
+            company.addDepartment("Designers", 0);
+            company.getDepartment(1).addEmployee(3, "Georg", "Shultc", "03", 111);
+            company.getDepartment(1).addEmployee(4, "Georg", "Shultc", "04", 111);
+            company.getDepartment(1).addEmployee(5, "Georg", "Shultc", "05", 111);
+            company.getDepartment(1).addEmployee(6, "Georg", "Shultc", "06", 111);
+            company.getDepartment(1).addEmployee(7, "Georg", "Shultc", "07", 111);
+            company.getDepartment(1).addEmployee(8, "Georg", "Shultc", "08", 111);
+            company.getDepartment(1).addEmployee(9, "Georg", "Shultc", "09", 111);
 
-        System.out.println("\nВывод информации о фирме:");
-        for (int i = 0; i < model.departmentCount(); i++) {
-            System.out.println(model.getDepartment(i).toString());
-            for (int j = 0; j < model.employeeCount(i); j++) {
-                System.out.println(model.getEmployee(i, j).toString());
+            company.addDepartment("Testers", 8);
+            company.getDepartment(2).addEmployee(11, "Georg", "Shultc", "10", 111);
+            company.getDepartment(2).addEmployee(12, "Georg", "Shultc", "11", 111);
+            company.getDepartment(2).addEmployee(13, "Georg", "Shultc", "12", 111);
+
+            company.addDepartment("Directors", 0);
+            company.getDepartment(3).addEmployee(14, "Georg", "Shultc", "13", 111);
+
+            System.out.println("Вывод информации о фирме:");
+            for (int i = 0; i < company.departmentCount(); i++) {
+                System.out.println(company.getDepartment(i).toString());
+                for (int j = 0; j < company.getDepartment(i).employeeCount(); j++) {
+                    System.out.println(company.getDepartment(i).getEmployee(j).toString());
+                }
             }
-        }
-        
-        model.updateDepartment(0, "Programmers", 8);
-        model.addDepartment("Producers", 0);
-        model.addEmployee(14, "Jack", "Shultc", "14", "Programmers", 555);
-        model.addEmployee(15, "Jacob", "Shultc", "15", "Designers", 555);
-        model.deleteEmployee(13);
-        model.deleteEmployee(2);
-        model.updateEmployee(7, 16, "Georg", "Shultc", "07", "Producers", 222);
-        model.addEmployee(model.generateId(), "Jan", "Shultc", "007", "Directors", 555);
 
-        System.out.println("\nВывод информации о фирме:");
-        for (int i = 0; i < model.departmentCount(); i++) {
-            System.out.println(model.getDepartment(i).toString());
-            for (int j = 0; j < model.employeeCount(i); j++) {
-                System.out.println(model.getEmployee(i, j).toString());
+            company.saveDataXML("data.xml");
+
+            for (int i = 0; i < company.departmentCount(); i++) {
+                for (int j = company.getDepartment(i).employeeCount() - 1; j >= 0; j--) {
+                    if (company.getDepartment(i).getEmployee(j).getId() % 2 == 0) {
+                        company.getDepartment(i).deleteEmployee(j);
+                    }
+                }
             }
+
+            System.out.println("Вывод информации о фирме:");
+            for (int i = 0; i < company.departmentCount(); i++) {
+                System.out.println(company.getDepartment(i).toString());
+                for (int j = 0; j < company.getDepartment(i).employeeCount(); j++) {
+                    System.out.println(company.getDepartment(i).getEmployee(j).toString());
+                }
+            }
+
+            company = new Company("data.xml");
+
+            System.out.println("Вывод информации о фирме:");
+            for (int i = 0; i < company.departmentCount(); i++) {
+                System.out.println(company.getDepartment(i).toString());
+                for (int j = 0; j < company.getDepartment(i).employeeCount(); j++) {
+                    System.out.println(company.getDepartment(i).getEmployee(j).toString());
+                }
+            }
+
+            company.deleteDepartment("Testers");
+            company.addDepartment("Producers", 5);
+            company.getDepartment("Producers").addEmployee(company.generateId(), "Jacob", "Shultc", "Manager", 22243);
+            company.getDepartment(0).deleteEmployee(0);
+            company.getDepartment(0).getEmployee(0).setId(2);
+
+            System.out.println("Вывод информации о фирме:");
+            for (int i = 0; i < company.departmentCount(); i++) {
+                System.out.println(company.getDepartment(i).toString());
+                for (int j = 0; j < company.getDepartment(i).employeeCount(); j++) {
+                    System.out.println(company.getDepartment(i).getEmployee(j).toString());
+                }
+            }
+        } catch (DepartmentWithSuchNameDoesNotExist e) {
+            System.err.println(e);
+        } catch (EmployeeWithSuchIdDoesNotExist e) {
+            System.err.println(e);
+
+        } catch (DepartmentWithSuchNameExist e) {
+            System.err.println(e);
+
+        } catch (EmployeeWithSuchIdExist e) {
+            System.err.println(e);
+
+        } catch (UncorrectId e) {
+            System.err.println(e);
+
+        } catch (UncorrectXML e) {
+            System.err.println(e);
         }
     }
 }
