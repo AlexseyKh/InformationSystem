@@ -7,6 +7,7 @@ package informationsystem;
 
 import informationsystem.exceptions.*;
 import informationsystem.model.dataClasses.Company;
+import informationsystem.model.dataClasses.Department;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +20,7 @@ public class InformationSystem {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Company company = new Company(new ArrayList<>());
+        Company company = new Company(new ArrayList<Department>());
         try {
 
             company.addDepartment("Programmers", 0);
