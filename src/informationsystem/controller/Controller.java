@@ -1,14 +1,20 @@
 package informationsystem.controller;
 
+
+import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
+import informationsystem.exceptions.DepartmentWithSuchNameExist;
+import informationsystem.exceptions.EmployeeWithSuchIdDoesNotExist;
+import informationsystem.exceptions.UncorrectXML;
+
 import informationsystem.exceptions.*;
+
 import informationsystem.model.dataClasses.*;
-import java.io.*;
 import informationsystem.model.dataClasses.Company;
 import java.util.ArrayList;
 
 /**
  *
- * @author Михаил
+ * @author пїЅпїЅпїЅпїЅпїЅпїЅ
  */
 
 
@@ -54,6 +60,7 @@ public class Controller {
     public Employee getEmployee(int index) {
         return c.getEmployee(index);
     }
+
     public void addEmployee(int department, int id, String firstName, String secondName,
                             String function, int salary) throws UncorrectId, EmployeeWithSuchIdExist {
         c.getDepartment(department).addEmployee(id, firstName, secondName, function, salary);
@@ -61,4 +68,5 @@ public class Controller {
     public void delEmployee(int department, int id) {
         c.getDepartment(department).deleteEmployee(id);
     }
+
 }

@@ -5,11 +5,14 @@
  */
 package informationsystem;
 
+import informationsystem.controller.Controller;
+import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
+import informationsystem.exceptions.UncorrectXML;
+import informationsystem.model.dataClasses.Employee;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -19,7 +22,7 @@ import javax.swing.tree.*;
  * @author Алексей
  */
 public class Frame1 extends JFrame {
-    
+    Controller con;
     JPanel mainPanel;
     JMenuBar menuBar;
     JMenu menuFile;
@@ -27,7 +30,7 @@ public class Frame1 extends JFrame {
     JMenuItem companyDownItem;
     DefaultMutableTreeNode level0;
     JTree jt;
-    JFrame mainFrame = this;
+    Frame1 mainFrame = this;
     JScrollPane jsp;
     
     public Frame1() {
@@ -51,105 +54,135 @@ public class Frame1 extends JFrame {
         companyUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Random r = new Random();
-                int count = r.nextInt(10); 
-                if(jsp != null){
-                mainFrame.remove(jsp);
-                mainFrame.revalidate();
-                mainFrame.repaint();
-                }                
-                level0 =  new DefaultMutableTreeNode("Название компании");               
-                jt = new JTree(level0);
-                DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[count];
-                for(int i = 0; i < departments.length; i++){
-                    departments[i] = new DefaultMutableTreeNode("Отдел №" + i);                    
-                        for(int j = 0; j < count / 2; j++){
-                            DefaultMutableTreeNode employee = new DefaultMutableTreeNode("Сотрудник №" + j);                            
-                            departments[i].add(employee);
-                        }
-                    level0.add(departments[i]);
-                }                
-                jt.addMouseListener(new MouseAdapter() {
-                    JPopupMenu popup;
-                    @Override
-                    public void mouseClicked(MouseEvent me) {
-                       TreePath tp = jt.getPathForLocation(me.getX(), me.getY());                       
-                        if (tp != null && tp.getPathCount() == 3 && me.getClickCount() == 2){
-                           new Frame2(tp.getLastPathComponent().toString());                            
-                        }
-                        if (tp != null && tp.getPathCount() == 3 && me.getButton() == 3){
-                           popup = new JPopupMenu();
-                           JMenuItem delete = new JMenuItem("Delete");
-                           JMenuItem show = new JMenuItem("Show");     
-                           popup.add(show);
-                           popup.add(delete);                           
-                           popup.show(mainFrame, me.getX()  + 25, me.getY() + 50);
-                           show.addActionListener(new ActionListener() {
-
-                               @Override
-                               public void actionPerformed(ActionEvent e) {
-                                   new Frame2("");
-                               }
-                           });
-                           delete.addActionListener(new ActionListener() {
-
-                               @Override
-                               public void actionPerformed(ActionEvent e) {
-                                   if(JOptionPane.showConfirmDialog(mainFrame, "Удалить сотрудника?") == 0){
-                               //удаляю отдел
-                           }   
-                               }
-                           });
-                        }
-                         if (tp != null && tp.getPathCount() == 2 && me.getButton() == 3){
-                           popup = new JPopupMenu();
-                           JMenuItem delete = new JMenuItem("Delete");
-                           JMenuItem show = new JMenuItem("Show"); 
-                           JMenuItem add = new JMenuItem("Add"); 
-                           popup.add(show);
-                           popup.add(delete);
-                           popup.add(add);
-                           popup.show(mainFrame, me.getX()  + 25, me.getY() + 50);
-                           show.addActionListener(new ActionListener() {
-
-                               @Override
-                               public void actionPerformed(ActionEvent e) {
-                                   new Frame2("");
-                               }
-                           });
-                           delete.addActionListener(new ActionListener() {
-
-                               @Override
-                               public void actionPerformed(ActionEvent e) {
-                                   if(JOptionPane.showConfirmDialog(mainFrame, "Удалить отдел?") == 0){
-                               //удаляю отдел
-                           }   
-                               }
-                           });   
-                           delete.addActionListener(new ActionListener() {
-
-                               @Override
-                               public void actionPerformed(ActionEvent e) {
-                                   //добавляю сотрудника
-                               }
-                           });
-                         }
-                                       
-                  }
-                });
-                int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
-                int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
-                jsp = new JScrollPane(jt, v, h);
-                mainFrame.getContentPane().add(jsp);
-                mainFrame.setVisible(true);
+                try {
+                    boolean res = false;
+                    JFileChooser f = new JFileChooser();
+                    f.setMultiSelectionEnabled(false);
+                    f.showDialog(null, "Open ");
+                    con = new Controller();
+                    con.createCompany(f.getSelectedFile().getPath()); 
+                    createTree();
+                } catch (UncorrectXML ex) {}
                 
                 
                 
             }
         });
+        companyDownItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {  
+                JFileChooser f = new JFileChooser("Save as..");
+                f.showSaveDialog(null);
+                con.saveDataXML(f.getSelectedFile().getPath());
+                
+            }                        
+        });
         
         
       }
+    public void createTree(){
+                    if(jsp != null){
+                        mainFrame.remove(jsp);
+                        mainFrame.revalidate();
+                        mainFrame.repaint();
+                    }
+                    level0 =  new DefaultMutableTreeNode("Название компании");
+                    jt = new JTree(level0);
+                    DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[con.departmentCount()];
+                    for(int i = 0; i < departments.length; i++){                    
+                        departments[i] = new DefaultMutableTreeNode(con.getDepartment(i).getName());
+                        for(int j = 0; j < con.getDepartment(i).employeeCount(); j++){
+                            DefaultMutableTreeNode employee = new DefaultMutableTreeNode(j+1);                            
+                            departments[i].add(employee);
+                        }
+                        level0.add(departments[i]);
+                    }
+                    jt.addMouseListener(new MouseAdapter() {
+                        JPopupMenu popup;
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            TreePath tp = jt.getPathForLocation(me.getX(), me.getY());
+                            if (tp != null && tp.getPathCount() == 3 && me.getClickCount() == 2){
+                                String departmentName = tp.getParentPath().getLastPathComponent().toString();
+                                int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
+                                try {
+                                    Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+                                    new Frame2(emp);                                                 
+                                } catch (DepartmentWithSuchNameDoesNotExist ex) {}                          
+                            }
+                            if (tp != null && tp.getPathCount() == 3 && me.getButton() == 3){
+                                popup = new JPopupMenu();
+                                JMenuItem delete = new JMenuItem("Delete");
+                                JMenuItem show = new JMenuItem("Show");
+                                popup.add(show);
+                                popup.add(delete);
+                                popup.show(mainFrame, me.getX()  + 25, me.getY() + 50);
+                                show.addActionListener(new ActionListener() {
+                                    
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                            String departmentName = tp.getParentPath().getLastPathComponent().toString();
+                                            int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
+                                            try {
+                                                Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+                                                new Frame2(emp);                                                 
+                                            } catch (DepartmentWithSuchNameDoesNotExist ex) {}
+                                    }
+                                });
+                                delete.addActionListener(new ActionListener() {
+                                    
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        if(JOptionPane.showConfirmDialog(mainFrame, "Удалить сотрудника?") == 0){
+                                            String departmentName = tp.getParentPath().getLastPathComponent().toString();
+                                            int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
+                                            try {
+                                                con.getDepartment(departmentName).deleteEmployee(employeeId - 1); 
+                                                createTree();
+                                            } catch (DepartmentWithSuchNameDoesNotExist ex) {}
+                                        }
+                                    }
+                                });
+                            }
+                            if (tp != null && tp.getPathCount() == 2 && me.getButton() == 3){
+                                popup = new JPopupMenu();
+                                JMenuItem delete = new JMenuItem("Delete");
+                                JMenuItem add = new JMenuItem("Add");                                
+                                popup.add(delete);
+                                popup.add(add);
+                                popup.show(mainFrame, me.getX()  + 25, me.getY() + 50);                                
+                                delete.addActionListener(new ActionListener() {
+                                    
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        if(JOptionPane.showConfirmDialog(mainFrame, "Удалить отдел?") == 0){
+                                            try {
+                                                String departmentName = tp.getLastPathComponent().toString();
+                                                con.deleteDepartment(departmentName);
+                                                createTree();
+                                            } catch (DepartmentWithSuchNameDoesNotExist ex) { }
+                                        }
+                                    }
+                                });
+                                add.addActionListener(new ActionListener() {
+                                    
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        String departmentName = tp.getLastPathComponent().toString();
+                                        new Frame2(con, departmentName, mainFrame);   
+                                        
+                                    }
+                                });
+                            }
+                            
+                        }
+                    });
+                    int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+                    int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+                    jsp = new JScrollPane(jt, v, h);
+                    mainFrame.getContentPane().add(jsp);
+                    mainFrame.setVisible(true);
+    }
  }
 
     
