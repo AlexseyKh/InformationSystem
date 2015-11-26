@@ -5,41 +5,59 @@
  */
 package informationsystem.model.dataClasses;
 
+import javax.xml.bind.annotation.XmlElement;
+import informationsystem.exceptions.*;
+
 /**
  *
  * @author Игорь
  */
 public class Employee {
 
-    private int id;
+    @XmlElement
+    private int identificator;
+
     private String firstName;
+
     private String secondName;
-    private Department department;
-    private String number;
+
+    private String function;
+
     private int salary;
+
+    Department parentDepartment;
 
     public Employee() {
     }
 
-    public Employee(int id, String firstName, String secondName, Department department, String number, int salary) {
-        this.id = id;
+    public Employee(int id, String firstName, String secondName, String function, int salary, Department parentDepartment) {
+        this.identificator = id;
         this.firstName = firstName;
         this.secondName = secondName;
-        this.department = department;
-        this.number = number;
+        this.function = function;
         this.salary = salary;
+        this.parentDepartment = parentDepartment;
     }
 
     @Override
     public String toString() {
-        return "Employee{" + "id=" + getId() + ", firstName=" + getFirstName() + ", secondName=" + getSecondName() + ", department=" + getDepartment() + ", number=" + getNumber() + ", salary=" + getSalary() + '}';
+        return "Employee{" + "id=" + getId() + ", firstName=" + getFirstName() + ", secondName=" + getSecondName() + ", function=" + getFunction() + ", salary=" + getSalary() + '}';
     }
 
-    /**
-     * @return the id
-     */
     public int getId() {
-        return id;
+        return identificator;
+    }
+
+    public void setId(int id)
+            throws EmployeeWithSuchIdExist, UncorrectId {
+        if (id <= 0) {
+            throw new UncorrectId();
+        }
+        if (this.identificator != id && parentDepartment.getParentCompany().suchEmployeeExist(id)) {
+            throw new EmployeeWithSuchIdExist();
+        }
+        this.identificator = id;
+
     }
 
     /**
@@ -50,6 +68,13 @@ public class Employee {
     }
 
     /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
      * @return the secondName
      */
     public String getSecondName() {
@@ -57,17 +82,24 @@ public class Employee {
     }
 
     /**
-     * @return the department
+     * @param secondName the secondName to set
      */
-    public Department getDepartment() {
-        return department;
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
     }
 
     /**
-     * @return the number
+     * @return the function
      */
-    public String getNumber() {
-        return number;
+    public String getFunction() {
+        return function;
+    }
+
+    /**
+     * @param function the function to set
+     */
+    public void setFunction(String function) {
+        this.function = function;
     }
 
     /**
@@ -77,8 +109,11 @@ public class Employee {
         return salary;
     }
 
-    
-
- 
+    /**
+     * @param salary the salary to set
+     */
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
 
 }
