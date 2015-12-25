@@ -5,12 +5,13 @@
  */
 package informationsystem;
 
+import java.awt.event.ActionListener;
+import java.util.EventListener;
+
 /**
  *
  * @author Алексей
  */
-public class Application {
-    public static void main(String args[]){
-        new FrameTable();
-    }
+public interface TableButtonListener extends EventListener {
+  public void tableButtonClicked( int row, int col );
 }
