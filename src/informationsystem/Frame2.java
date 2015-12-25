@@ -5,10 +5,6 @@
  */
 package informationsystem;
 
-import informationsystem.controller.Controller;
-import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
-import informationsystem.exceptions.EmployeeWithSuchIdExist;
-import informationsystem.exceptions.UncorrectId;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 import java.awt.Font;
@@ -107,7 +103,7 @@ public class Frame2 extends JFrame {
 
     }
     
-    public Frame2(Controller con, String s, Frame1 parent) { 
+    public Frame2(Department dep) { 
         panelInfo = new JPanel(new GridLayout(2,1)); 
         employeeImg = new ImagePanel();        
         employeeImg.setImage("src\\img\\Nikita_Dzhigurda.jpg");
@@ -148,14 +144,9 @@ public class Frame2 extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {                
-                try {
+                
                     
-                    con.getDepartment(s).addEmployee(con.generateId(), firstNameText.getText(), lastNameText.getText(), functionText.getText(), Integer.valueOf(salaryText.getText()));
-                    parent.createTree();      
-                    processWindowEvent(new WindowEvent(thisFrame,WindowEvent.WINDOW_CLOSING));
-                    } catch (EmployeeWithSuchIdExist ex) {                      
-                    } catch (UncorrectId ex) {                        
-                    } catch (DepartmentWithSuchNameDoesNotExist ex) {  }
+                   
             }
         });
        
