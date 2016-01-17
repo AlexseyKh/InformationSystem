@@ -37,6 +37,11 @@ public class FrameTable extends JFrame {
     JMenuItem companyUpItem;
     JMenuItem companyDownItem;
     Controller con;
+    JButton addDep;
+    JButton addEmp;
+    JButton viewAllEmp;
+    
+    long currdep = -1;
 
     public FrameTable() {
         //Инициализация      
@@ -71,7 +76,7 @@ public class FrameTable extends JFrame {
         table.ipadx = 800;
         table.ipady = 250;
         departmentPanel.add(jspD, table);
-        JButton addDep = new JButton("Add Department");
+        addDep = new JButton("Add Department");
         addDep.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -81,7 +86,7 @@ public class FrameTable extends JFrame {
         chgDepartmentPanel.add(addDep);
         departmentPanel.add(chgDepartmentPanel);
         employeePanel.add(jspE, table);
-        JButton addEmp = new JButton("Add Employee");
+        addEmp = new JButton("Add Employee");
         addEmp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -89,47 +94,12 @@ public class FrameTable extends JFrame {
             }
         });
         addEmp.setEnabled(false);
-        JButton viewAllEmp = new JButton("View All Employee");
+        viewAllEmp = new JButton("View All Employee");
         viewAllEmp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 addEmp.setEnabled(false);
-                DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0); 
-//                for (int i = 0; i < con.employeeCount(); i++) {
-//                    empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
-//                }
-                ////
-                Employee[] emps = con.getAllEmployees();
-                for (int i = 0; i < emps.length; i++) {
-                    empModel.addRow(new String[]{String.valueOf(emps[i].getId()), emps[i].getFirstName(), emps[i].getLastName(), emps[i].getFunction(), String.valueOf(emps[i].getSalary())});
-                }
-                ////
-                employeeTable.setModel(empModel);
-                TableButton delEmp = new TableButton("Delete");
-                TableColumn tcDelEmp = new TableColumn();
-                tcDelEmp.setHeaderValue("Delete");
-                delEmp.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
-                    }
-                });
-                tcDelEmp.setCellEditor(delEmp);
-                tcDelEmp.setCellRenderer(delEmp);
-                employeeTable.addColumn(tcDelEmp);
-                TableButton editEmp = new TableButton("Edit");
-                TableColumn tcEditEmp = new TableColumn();
-                tcEditEmp.setHeaderValue("Edit");
-                editEmp.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        System.out.println(row + " " + col);
-                        new Frame2(con.getEmployee(Integer.valueOf((String) employeeTable.getModel().getValueAt(row, 0)) - 1));
-                    }
-                });
-                tcEditEmp.setCellEditor(editEmp);
-                tcEditEmp.setCellRenderer(editEmp);
-                employeeTable.addColumn(tcEditEmp);
+                createEmployeeTable(-1);
             }
         });
         chgEmployeePanel.add(addEmp);
@@ -149,93 +119,9 @@ public class FrameTable extends JFrame {
                 f.showDialog(null, "Open ");
                 con = new Controller();
                 con.createCompanyFromXML(f.getSelectedFile().getPath());
-                DefaultTableModel depModel = new DefaultTableModel(new String[]{"Name", "Director ID"}, 0);
-//                for (int i = 0; i < con.departmentCount(); i++) {
-//                    depModel.addRow(new String[]{String.valueOf(con.getDepartment(i).getName()), String.valueOf(con.getDepartment(i).getDirectorId())});
-//                }
-                ////
-                Department[] deps = con.getAllDepartments();
-                for (int i = 0; i < deps.length; i++) {
-                    depModel.addRow(new String[]{String.valueOf(deps[i].getName()), String.valueOf(deps[i].getDirectorId())});
-                }
-                ////
-                departmentTable.setModel(depModel);
-                TableButton delDep = new TableButton("Delete");
-                TableColumn tcDelDep = new TableColumn();
-                tcDelDep.setHeaderValue("Delete");
-                delDep.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        ((DefaultTableModel) departmentTable.getModel()).removeRow(row);
-                    }
-                });
-                tcDelDep.setCellEditor(delDep);
-                tcDelDep.setCellRenderer(delDep);
-                departmentTable.addColumn(tcDelDep);
-                TableButton editDep = new TableButton("Edit");
-                TableColumn tcEditDep = new TableColumn();
-                tcEditDep.setHeaderValue("Edit");
-                editDep.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        new Frame2(con.getDepartment((String) departmentTable.getModel().getValueAt(row, 0)));
-
-                    }
-                });
-                tcEditDep.setCellEditor(editDep);
-                tcEditDep.setCellRenderer(editDep);
-                departmentTable.addColumn(tcEditDep);
-                TableButton lookDep = new TableButton("Look");
-                TableColumn tcLookDep = new TableColumn();
-                tcLookDep.setHeaderValue("Look");
-                lookDep.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-
-                        new Frame2(con.getDepartment((String) departmentTable.getModel().getValueAt(row, 0)));
-
-                    }
-                });
-                tcLookDep.setCellEditor(lookDep);
-                tcLookDep.setCellRenderer(lookDep);
-                departmentTable.addColumn(tcLookDep);
-                DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0);
- //               for (int i = 0; i < con.employeeCount(); i++) {
- //                   empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
- //               }
-                ////
-                Employee[] emps = con.getAllEmployees();
-                for (int i = 0; i < emps.length; i++) {
-                    empModel.addRow(new String[]{String.valueOf(emps[i].getId()), emps[i].getFirstName(), emps[i].getLastName(), emps[i].getFunction(), String.valueOf(emps[i].getSalary())});
-                }
-                ////
-                employeeTable.setModel(empModel);
-                TableButton delEmp = new TableButton("Delete");
-                TableColumn tcDelEmp = new TableColumn();
-                tcDelEmp.setHeaderValue("Delete");
-                delEmp.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
-                    }
-                });
-                tcDelEmp.setCellEditor(delEmp);
-                tcDelEmp.setCellRenderer(delEmp);
-                employeeTable.addColumn(tcDelEmp);
-                TableButton editEmp = new TableButton("Edit");
-                TableColumn tcEditEmp = new TableColumn();
-                tcEditEmp.setHeaderValue("Edit");
-                editEmp.addTableButtonListener(new TableButtonListener() {
-                    @Override
-                    public void tableButtonClicked(int row, int col) {
-                        System.out.println(row + " " + col);
-                        new Frame2(con.getEmployee(Integer.valueOf((String) employeeTable.getModel().getValueAt(row, 0)) - 1));
-                    }
-                });
-                tcEditEmp.setCellEditor(editEmp);
-                tcEditEmp.setCellRenderer(editEmp);
-                employeeTable.addColumn(tcEditEmp);
-
+                createDepartmentTable();
+                createEmployeeTable(-1);
+                
             }
         });
         companyDownItem.addActionListener(new ActionListener() {
@@ -258,6 +144,90 @@ public class FrameTable extends JFrame {
         this.setTitle("Information System");
         this.setVisible(true);
 
+    }
+    
+    public void createEmployeeTable(long id){
+        DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0); 
+        Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
+        for (Employee emp : emps) {
+            empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
+        }
+        employeeTable.setModel(empModel);
+        TableButton delEmp = new TableButton("Delete");
+        TableColumn tcDelEmp = new TableColumn();
+        tcDelEmp.setHeaderValue("Delete");
+        delEmp.addTableButtonListener(new TableButtonListener() {
+            @Override
+            public void tableButtonClicked(int row, int col) {
+                long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
+                con.deleteEmployee(id);
+                ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
+            }
+        });
+        tcDelEmp.setCellEditor(delEmp);
+        tcDelEmp.setCellRenderer(delEmp);
+        employeeTable.addColumn(tcDelEmp);
+        TableButton editEmp = new TableButton("Edit");
+        TableColumn tcEditEmp = new TableColumn();
+        tcEditEmp.setHeaderValue("Edit");
+        editEmp.addTableButtonListener(new TableButtonListener() {
+            @Override
+            public void tableButtonClicked(int row, int col) {
+                //new Frame2(con.getEmployee( - 1));
+            }
+        });
+        tcEditEmp.setCellEditor(editEmp);
+        tcEditEmp.setCellRenderer(editEmp);
+        employeeTable.addColumn(tcEditEmp);
+    }
+    
+    public void createDepartmentTable(){
+        DefaultTableModel depModel = new DefaultTableModel(new String[]{"ID","Name", "Director ID"}, 0);
+        Department[] deps = con.getAllDepartments();
+        for (Department dep : deps) {
+            depModel.addRow(new String[]{String.valueOf(dep.getId()), String.valueOf(dep.getName()), String.valueOf(dep.getDirectorId())});
+        }
+        departmentTable.setModel(depModel);
+        TableButton delDep = new TableButton("Delete");
+        TableColumn tcDelDep = new TableColumn();
+        tcDelDep.setHeaderValue("Delete");
+        delDep.addTableButtonListener(new TableButtonListener() {
+            @Override
+            public void tableButtonClicked(int row, int col) {
+                con.deleteDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
+                ((DefaultTableModel) departmentTable.getModel()).removeRow(row);
+            }
+        });
+        tcDelDep.setCellEditor(delDep);
+        tcDelDep.setCellRenderer(delDep);
+        departmentTable.addColumn(tcDelDep);
+        TableButton editDep = new TableButton("Edit");
+        TableColumn tcEditDep = new TableColumn();
+        tcEditDep.setHeaderValue("Edit");
+        editDep.addTableButtonListener(new TableButtonListener() {
+            @Override
+            public void tableButtonClicked(int row, int col) {
+                //new Frame2(con.getDepartment((String) departmentTable.getModel().getValueAt(row, 0)));
+
+            }
+        });
+        tcEditDep.setCellEditor(editDep);
+        tcEditDep.setCellRenderer(editDep);
+        departmentTable.addColumn(tcEditDep);
+        TableButton lookDep = new TableButton("Look");
+        TableColumn tcLookDep = new TableColumn();
+        tcLookDep.setHeaderValue("Look");
+        lookDep.addTableButtonListener(new TableButtonListener() {
+            @Override
+            public void tableButtonClicked(int row, int col) {
+                addEmp.setEnabled(true);
+                currdep = Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0));
+                createEmployeeTable(currdep);
+            }
+        });
+        tcLookDep.setCellEditor(lookDep);
+        tcLookDep.setCellRenderer(lookDep);
+        departmentTable.addColumn(tcLookDep);
     }
 
 }
