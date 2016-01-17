@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import informationsystem.exceptions.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Random;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -91,10 +92,26 @@ public class Department {
         this.directorId = directorId;
     }
 
+    @Override
     public int hashCode(){
         int hash = 37;
         hash += 13*getName().hashCode();
         return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Department other = (Department) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package informationsystem.model.dataClasses;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -103,11 +104,30 @@ public class Employee {
         this.salary = salary;
     }
 
+    @Override
     public int hashCode(){
         int hash = 37;
         hash += 19*getFirstName().hashCode();
         hash += 19*getLastName().hashCode();
         return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Employee other = (Employee) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        return true;
     }
 
 

@@ -211,6 +211,7 @@ public class Controller {
                 dep.getEmployees().add(new Employee(company.getIdSequenceForEmployees(),
                         firstName, secondName, function, salary));
                 company.setIdSequenceForEmployees(company.getIdSequenceForEmployees() + 1);
+                break;
             }
         }
 
