@@ -230,8 +230,9 @@ public class Controller {
             for (Employee emp : dep.getEmployees()) {
                 if (emp.getId() == id) {
                     dep.getEmployees().remove(emp);
+                    break;
                 }
-                break;
+                
             }
         }
     }
