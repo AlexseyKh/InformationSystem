@@ -96,6 +96,7 @@ public class Department {
     public int hashCode(){
         int hash = 37;
         hash += 13*getName().hashCode();
+        hash += 13*getDirectorId();
         return hash;
     }
 

@@ -107,8 +107,9 @@ public class Employee {
     @Override
     public int hashCode(){
         int hash = 37;
-        hash += 19*getFirstName().hashCode();
-        hash += 19*getLastName().hashCode();
+        hash += 11*getFirstName().hashCode();
+        hash += 11*getLastName().hashCode();
+        hash += 11*getSalary();
         return hash;
     }
 
