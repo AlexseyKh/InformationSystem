@@ -7,7 +7,11 @@ package informationsystem.model.dataClasses;
 
 import java.util.ArrayList;
 import informationsystem.exceptions.*;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Random;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -17,100 +21,80 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Department {
 
     @XmlElement
-    private String departmentName;
+    private long id;
+    private String name;
+    private long directorId;
     @XmlElement
-    private int directorIdentificator;
-    @XmlElement
-    private ArrayList<Employee> employees;
-
-    Company parentCompany;
-
-
+    private LinkedHashSet<Employee> employees;
     
     public Department() {
+        this.employees = new LinkedHashSet<>();
     }
 
-    public Department(String name, int directorID, Company parentCompany) {
-        this.departmentName = name;
-        this.directorIdentificator = directorID;
-        this.employees = new ArrayList<>();
-        this.parentCompany = parentCompany;
+    public Department(long id, String name) {
+        this.id = id;
+        this.name = name;
+        this.directorId = -1;
+        this.employees = new LinkedHashSet<>();
+    }
+
+    public int getEmployeeCount(){
+        return employees.size();
     }
 
     @Override
     public String toString() {
-        return "Department{" + "name=" + getName() + ", directorID=" + Department.this.getDirectorID() + '}';
+        return id + " " + name + " " + directorId;
     }
-
-    //
-    //Методы работы с сотрудниками.
-    //
-    //Поле department не может быть пустым.
-    //ID сотрудника - ключ.
-    //ID может быть только положительным.
-    //
-    public int employeeCount() {
-        return employees.size();
+    
+    
+    
+    /**
+     * @return the id
+     */
+    public long getId() {
+        return id;
     }
-
-    public Employee getEmployee(int index) {
-        return employees.get(index);
-    }
-
-    public void addEmployee(int id, String firstName, String secondName,
-            String function, int salary) throws EmployeeWithSuchIdExist, UncorrectId {
-        if (id <= 0) {
-            throw new UncorrectId();
-        }
-        if (parentCompany.suchEmployeeExist(id)) {
-            throw new EmployeeWithSuchIdExist();
-        }
-        employees.add(new Employee(id, firstName, secondName, function, salary, this));
-    }
-
-    public void deleteEmployee(int index) {
-        System.out.println(parentCompany);
-        for (int i = 0; i < parentCompany.departmentCount(); i++) {
-            if (employees.get(index).getId() == parentCompany.getDepartment(i).getDirectorID()) {
-                parentCompany.getDepartment(i).directorIdentificator = 0;
-            }
-        }
-        employees.remove(index);
+    
+    /**
+     * @return the employees
+     */
+    public LinkedHashSet<Employee> getEmployees() {
+        return employees;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-        return departmentName;
+        return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName(String name)
-            throws DepartmentWithSuchNameExist {
-        if (!this.departmentName.equalsIgnoreCase(name) && parentCompany.suchDepartmentExist(name)) {
-            throw new DepartmentWithSuchNameExist();
-        }
-        this.departmentName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @XmlTransient
-    public int getDirectorID() {
-        return directorIdentificator;
+    /**
+     * @return the directorId
+     */
+    public long getDirectorId() {
+        return directorId;
     }
 
-    public void setDirectorID(int directorID)
-            throws EmployeeWithSuchIdDoesNotExist {
-        if (!parentCompany.suchEmployeeExist(directorID)) {
-            throw new EmployeeWithSuchIdDoesNotExist();
-        }
-        this.directorIdentificator = directorID;
+    /**
+     * @param directorId the directorId to set
+     */
+    public void setDirectorId(long directorId) {
+        this.directorId = directorId;
     }
 
-    Company getParentCompany() {
-        return parentCompany;
+    public int hashCode(){
+        int hash = 37;
+        hash += 13*getName().hashCode();
+        return hash;
     }
-
+    
 }

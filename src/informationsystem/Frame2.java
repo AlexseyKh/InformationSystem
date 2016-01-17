@@ -67,7 +67,7 @@ public class Frame2 extends JFrame {
         panelInfo.add(employeeImg);
         panelInfo.add(employeeInfo); 
         
-        lastNameText.setText(emp.getSecondName());
+        lastNameText.setText(emp.getLastName());
         firstNameText.setText(emp.getFirstName());
         functionText.setText(emp.getFunction());
         salaryText.setText(String.valueOf(emp.getSalary()));
@@ -93,7 +93,7 @@ public class Frame2 extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 emp.setFirstName(firstNameText.getText());
-                emp.setSecondName(lastNameText.getText());
+                emp.setLastName(lastNameText.getText());
                 emp.setFunction(functionText.getText());
                 emp.setSalary(Integer.valueOf(salaryText.getText()));
                 processWindowEvent(new WindowEvent(thisFrame,WindowEvent.WINDOW_CLOSING));

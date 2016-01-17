@@ -6,7 +6,6 @@
 package informationsystem.model.dataClasses;
 
 import javax.xml.bind.annotation.XmlElement;
-import informationsystem.exceptions.*;
 
 /**
  *
@@ -15,49 +14,37 @@ import informationsystem.exceptions.*;
 public class Employee {
 
     @XmlElement
-    private int identificator;
-
+    private long id;
     private String firstName;
-
-    private String secondName;
-
+    private String lastName;
     private String function;
-
     private int salary;
 
-    Department parentDepartment;
-
     public Employee() {
+        
     }
 
-    public Employee(int id, String firstName, String secondName, String function, int salary, Department parentDepartment) {
-        this.identificator = id;
+    public Employee(long id, String firstName, String secondName, String function, int salary) {
+        this.id = id;
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.lastName = secondName;
         this.function = function;
         this.salary = salary;
-        this.parentDepartment = parentDepartment;
     }
 
     @Override
     public String toString() {
-        return "Employee{" + "id=" + getId() + ", firstName=" + getFirstName() + ", secondName=" + getSecondName() + ", function=" + getFunction() + ", salary=" + getSalary() + '}';
+        return id + " " + firstName + " " + lastName + " " + function + " " + salary; 
     }
 
-    public int getId() {
-        return identificator;
-    }
-
-    public void setId(int id)
-            throws EmployeeWithSuchIdExist, UncorrectId {
-        if (id <= 0) {
-            throw new UncorrectId();
-        }
-        if (this.identificator != id && parentDepartment.getParentCompany().suchEmployeeExist(id)) {
-            throw new EmployeeWithSuchIdExist();
-        }
-        this.identificator = id;
-
+    
+    
+    
+    /**
+     * @return the id
+     */
+    public long getId() {
+        return id;
     }
 
     /**
@@ -75,17 +62,17 @@ public class Employee {
     }
 
     /**
-     * @return the secondName
+     * @return the lastName
      */
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
     /**
-     * @param secondName the secondName to set
+     * @param lastName the lastName to set
      */
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**
@@ -115,5 +102,13 @@ public class Employee {
     public void setSalary(int salary) {
         this.salary = salary;
     }
+
+    public int hashCode(){
+        int hash = 37;
+        hash += 19*getFirstName().hashCode();
+        hash += 19*getLastName().hashCode();
+        return hash;
+    }
+
 
 }

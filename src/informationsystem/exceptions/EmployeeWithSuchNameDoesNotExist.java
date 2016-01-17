@@ -9,13 +9,13 @@ package informationsystem.exceptions;
  *
  * @author Игорь
  */
-public class EmployeeWithSuchIdDoesNotExist extends Exception {
+public class EmployeeWithSuchNameDoesNotExist extends Exception {
 
     /**
      * Creates a new instance of <code>EmployeeWithSuchIdDoesNotExist</code>
      * without detail message.
      */
-    public EmployeeWithSuchIdDoesNotExist() {
+    public EmployeeWithSuchNameDoesNotExist() {
     }
 
     /**
@@ -24,7 +24,7 @@ public class EmployeeWithSuchIdDoesNotExist extends Exception {
      *
      * @param msg the detail message.
      */
-    public EmployeeWithSuchIdDoesNotExist(String msg) {
+    public EmployeeWithSuchNameDoesNotExist(String msg) {
         super(msg);
     }
 }

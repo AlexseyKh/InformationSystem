@@ -9,13 +9,13 @@ package informationsystem.exceptions;
  *
  * @author Игорь
  */
-public class EmployeeWithSuchIdExist extends Exception {
+public class EmployeeWithSuchNameExist extends Exception {
 
-    public EmployeeWithSuchIdExist() {
+    public EmployeeWithSuchNameExist() {
     }
 
 
-    public EmployeeWithSuchIdExist(String msg) {
+    public EmployeeWithSuchNameExist(String msg) {
         super(msg);
     }
 }

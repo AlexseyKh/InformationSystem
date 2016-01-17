@@ -8,6 +8,7 @@ package informationsystem;
 import informationsystem.controller.Controller;
 import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
 import informationsystem.exceptions.UncorrectXML;
+import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,15 +57,15 @@ public class Frame1 extends JFrame {
         companyUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
+                
                     boolean res = false;
                     JFileChooser f = new JFileChooser();
                     f.setMultiSelectionEnabled(false);
                     f.showDialog(null, "Open ");
                     con = new Controller();
-                    con.createCompany(f.getSelectedFile().getPath()); 
+                    con.createCompanyFromXML(f.getSelectedFile().getPath()); 
                     createTree();
-                } catch (UncorrectXML ex) {}
+
                 
                 
                 
@@ -75,7 +76,7 @@ public class Frame1 extends JFrame {
             public void actionPerformed(ActionEvent ae) {  
                 JFileChooser f = new JFileChooser("Save as..");
                 f.showSaveDialog(null);
-                con.saveDataXML(f.getSelectedFile().getPath());
+                con.saveCompanyToXML(f.getSelectedFile().getPath());
                 
             }                        
         });
@@ -88,12 +89,13 @@ public class Frame1 extends JFrame {
                         mainFrame.revalidate();
                         mainFrame.repaint();
                     }
-                    level0 =  new DefaultMutableTreeNode("Название компании");
+                    level0 =  new DefaultMutableTreeNode(con.getCompanyName());
                     jt = new JTree(level0);
-                    DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[con.departmentCount()];
+                    DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[con.departmentCount()];              
                     for(int i = 0; i < departments.length; i++){                    
                         departments[i] = new DefaultMutableTreeNode(con.getDepartment(i).getName());
-                        for(int j = 0; j < con.getDepartment(i).employeeCount(); j++){
+                        Department[] deps = con.getAllDepartments();
+                        for(int j = 0; j < deps[i].getEmployeeCount(); j++){
                             DefaultMutableTreeNode employee = new DefaultMutableTreeNode(j+1);                            
                             departments[i].add(employee);
                         }
@@ -107,10 +109,11 @@ public class Frame1 extends JFrame {
                             if (tp != null && tp.getPathCount() == 3 && me.getClickCount() == 2){
                                 String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                 int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
-                                try {
-                                    Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+
+                                    Employee emp = con.getEmployeesOfDepartment(departmentName)[employeeId - 1];
+                                    //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
                                     new Frame2(emp);                                                 
-                                } catch (DepartmentWithSuchNameDoesNotExist ex) {}                          
+                                                       
                             }
                             if (tp != null && tp.getPathCount() == 3 && me.getButton() == 3){
                                 popup = new JPopupMenu();
@@ -125,10 +128,11 @@ public class Frame1 extends JFrame {
                                     public void actionPerformed(ActionEvent e) {
                                             String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                             int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
-                                            try {
-                                                Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+
+                                                Employee emp = con.getEmployeesOfDepartment(departmentName)[employeeId - 1];
+                                                //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
                                                 new Frame2(emp);                                                 
-                                            } catch (DepartmentWithSuchNameDoesNotExist ex) {}
+       
                                     }
                                 });
                                 delete.addActionListener(new ActionListener() {
@@ -138,10 +142,11 @@ public class Frame1 extends JFrame {
                                         if(JOptionPane.showConfirmDialog(mainFrame, "Удалить сотрудника?") == 0){
                                             String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                             int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
-                                            try {
-                                                con.getDepartment(departmentName).deleteEmployee(employeeId - 1); 
+
+                                                long id = con.getEmployeesOfDepartment(departmentName)[employeeId - 1].getId();
+                                                con.deleteEmployee(id);
+                                                //con.getDepartment(departmentName).deleteEmployee(employeeId - 1); 
                                                 createTree();
-                                            } catch (DepartmentWithSuchNameDoesNotExist ex) {}
                                         }
                                     }
                                 });
@@ -158,11 +163,11 @@ public class Frame1 extends JFrame {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         if(JOptionPane.showConfirmDialog(mainFrame, "Удалить отдел?") == 0){
-                                            try {
+
                                                 String departmentName = tp.getLastPathComponent().toString();
                                                 con.deleteDepartment(departmentName);
                                                 createTree();
-                                            } catch (DepartmentWithSuchNameDoesNotExist ex) { }
+
                                         }
                                     }
                                 });
@@ -170,10 +175,10 @@ public class Frame1 extends JFrame {
                                     
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        try {
+                                        
                                             String departmentName = tp.getLastPathComponent().toString();   
                                             new Frame2(con.getDepartment(departmentName));
-                                        } catch (DepartmentWithSuchNameDoesNotExist ex) {}
+                                        
                                         
                                     }
                                 });
