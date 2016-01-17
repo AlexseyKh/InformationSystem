@@ -8,6 +8,8 @@ package informationsystem;
 import informationsystem.controller.Controller;
 import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
 import informationsystem.exceptions.UncorrectXML;
+import informationsystem.model.dataClasses.Department;
+import informationsystem.model.dataClasses.Employee;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -92,10 +94,16 @@ public class FrameTable extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 addEmp.setEnabled(false);
-                DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0);
-                for (int i = 0; i < con.employeeCount(); i++) {
-                    empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
+                DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0); 
+//                for (int i = 0; i < con.employeeCount(); i++) {
+//                    empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
+//                }
+                ////
+                Employee[] emps = con.getAllEmployees();
+                for (int i = 0; i < emps.length; i++) {
+                    empModel.addRow(new String[]{String.valueOf(emps[i].getId()), emps[i].getFirstName(), emps[i].getLastName(), emps[i].getFunction(), String.valueOf(emps[i].getSalary())});
                 }
+                ////
                 employeeTable.setModel(empModel);
                 TableButton delEmp = new TableButton("Delete");
                 TableColumn tcDelEmp = new TableColumn();
@@ -142,9 +150,15 @@ public class FrameTable extends JFrame {
                 con = new Controller();
                 con.createCompanyFromXML(f.getSelectedFile().getPath());
                 DefaultTableModel depModel = new DefaultTableModel(new String[]{"Name", "Director ID"}, 0);
-                for (int i = 0; i < con.departmentCount(); i++) {
-                    depModel.addRow(new String[]{String.valueOf(con.getDepartment(i).getName()), String.valueOf(con.getDepartment(i).getDirectorId())});
+//                for (int i = 0; i < con.departmentCount(); i++) {
+//                    depModel.addRow(new String[]{String.valueOf(con.getDepartment(i).getName()), String.valueOf(con.getDepartment(i).getDirectorId())});
+//                }
+                ////
+                Department[] deps = con.getAllDepartments();
+                for (int i = 0; i < deps.length; i++) {
+                    depModel.addRow(new String[]{String.valueOf(deps[i].getName()), String.valueOf(deps[i].getDirectorId())});
                 }
+                ////
                 departmentTable.setModel(depModel);
                 TableButton delDep = new TableButton("Delete");
                 TableColumn tcDelDep = new TableColumn();
@@ -186,9 +200,15 @@ public class FrameTable extends JFrame {
                 tcLookDep.setCellRenderer(lookDep);
                 departmentTable.addColumn(tcLookDep);
                 DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0);
-                for (int i = 0; i < con.employeeCount(); i++) {
-                    empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
+ //               for (int i = 0; i < con.employeeCount(); i++) {
+ //                   empModel.addRow(new String[]{String.valueOf(con.getEmployee(i).getId()), con.getEmployee(i).getFirstName(), con.getEmployee(i).getLastName(), con.getEmployee(i).getFunction(), String.valueOf(con.getEmployee(i).getSalary())});
+ //               }
+                ////
+                Employee[] emps = con.getAllEmployees();
+                for (int i = 0; i < emps.length; i++) {
+                    empModel.addRow(new String[]{String.valueOf(emps[i].getId()), emps[i].getFirstName(), emps[i].getLastName(), emps[i].getFunction(), String.valueOf(emps[i].getSalary())});
                 }
+                ////
                 employeeTable.setModel(empModel);
                 TableButton delEmp = new TableButton("Delete");
                 TableColumn tcDelEmp = new TableColumn();
