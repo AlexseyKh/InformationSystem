@@ -34,6 +34,7 @@ public class FrameTable extends JFrame {
     JTable employeeTable;
     JMenuBar menuBar;
     JMenu menuFile;
+    JMenuItem companyCreate;
     JMenuItem companyUpItem;
     JMenuItem companyDownItem;
     Controller con;
@@ -56,12 +57,14 @@ public class FrameTable extends JFrame {
         employeeTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         menuBar = new JMenuBar();
         menuFile = new JMenu("File");
+        companyCreate = new JMenuItem("Create");
         companyUpItem = new JMenuItem("Import XML..");
         companyDownItem = new JMenuItem("Export XML..");
 
         //Компановка
+        menuFile.add(companyCreate);
         menuFile.add(companyUpItem);
-        menuFile.add(companyDownItem);
+        menuFile.add(companyDownItem);        
         menuBar.add(menuFile);
         JScrollPane jspD = new JScrollPane(departmentTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         JScrollPane jspE = new JScrollPane(employeeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -80,7 +83,12 @@ public class FrameTable extends JFrame {
         addDep.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-
+                String s = JOptionPane.showInputDialog("Enter a name for department");
+                if(!"".equals(s)){
+                con = new Controller();
+                con.addDepartment(s);
+                createDepartmentTable();
+                } else {JOptionPane.showMessageDialog(rootPane, "Error name!"); }
             }
         });
         chgDepartmentPanel.add(addDep);
@@ -131,6 +139,21 @@ public class FrameTable extends JFrame {
                 f.showSaveDialog(null);
                 con.saveCompanyToXML(f.getSelectedFile().getPath());
 
+            }
+        });
+        companyCreate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                String s = JOptionPane.showInputDialog("Enter a name for company");
+                if(!"".equals(s)){
+                con = new Controller();
+                con.createCompany(s);
+                createEmployeeTable(-1);
+                createDepartmentTable();
+                }
+                else{
+                    JOptionPane.showMessageDialog(rootPane, "Error name");
+                }
             }
         });
 
