@@ -41,6 +41,7 @@ public class FrameTable extends JFrame {
     JButton addDep;
     JButton addEmp;
     JButton viewAllEmp;
+    JFrame thisFrame;
     
     long currdep = -1;
 
@@ -60,6 +61,7 @@ public class FrameTable extends JFrame {
         companyCreate = new JMenuItem("Create");
         companyUpItem = new JMenuItem("Import XML..");
         companyDownItem = new JMenuItem("Export XML..");
+        thisFrame = this;
 
         //Компановка
         menuFile.add(companyCreate);
@@ -97,7 +99,7 @@ public class FrameTable extends JFrame {
         addEmp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-
+                JFrame fr = new AddEmployeeFrame(con, currdep,(FrameTable)thisFrame);  
             }
         });
         addEmp.setEnabled(false);
@@ -168,7 +170,7 @@ public class FrameTable extends JFrame {
 
     }
     
-    public void createEmployeeTable(long id){
+    public  void createEmployeeTable(long id){
         DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0); 
         Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
         for (Employee emp : emps) {
@@ -203,7 +205,7 @@ public class FrameTable extends JFrame {
         employeeTable.addColumn(tcEditEmp);
     }
     
-    public void createDepartmentTable(){
+    public  void createDepartmentTable(){
         DefaultTableModel depModel = new DefaultTableModel(new String[]{"ID","Name", "Director ID"}, 0);
         Department[] deps = con.getAllDepartments();
         for (Department dep : deps) {
