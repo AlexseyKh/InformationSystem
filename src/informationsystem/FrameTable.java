@@ -84,8 +84,7 @@ public class FrameTable extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String s = JOptionPane.showInputDialog("Enter a name for department");
-                if(!"".equals(s)){
-                con = new Controller();
+                if(!"".equals(s)){                
                 con.addDepartment(s);
                 createDepartmentTable();
                 } else {JOptionPane.showMessageDialog(rootPane, "Error name!"); }
