@@ -197,7 +197,8 @@ public class FrameTable extends JFrame {
         editEmp.addTableButtonListener(new TableButtonListener() {
             @Override
             public void tableButtonClicked(int row, int col) {
-                //new Frame2(con.getEmployee( - 1));
+                long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
+                new EmployeeEditFrame(con.getEmployee(id), (FrameTable) thisFrame);
             }
         });
         tcEditEmp.setCellEditor(editEmp);
@@ -231,7 +232,8 @@ public class FrameTable extends JFrame {
         editDep.addTableButtonListener(new TableButtonListener() {
             @Override
             public void tableButtonClicked(int row, int col) {
-                //new Frame2(con.getDepartment((String) departmentTable.getModel().getValueAt(row, 0)));
+                Department d = con.getDepartment((String) departmentTable.getModel().getValueAt(row, 1));
+                new EditDepartmentFrame(d, (FrameTable) thisFrame);
 
             }
         });

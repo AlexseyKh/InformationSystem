@@ -6,16 +6,12 @@
 package informationsystem;
 
 import informationsystem.controller.Controller;
-import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
-import informationsystem.exceptions.UncorrectXML;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.tree.*;
 

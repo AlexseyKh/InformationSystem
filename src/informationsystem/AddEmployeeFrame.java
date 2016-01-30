@@ -23,8 +23,7 @@ public class AddEmployeeFrame extends JFrame {
     Font f; 
     JLabel secondNameLabel;
     JLabel firstNameLabel;
-    JLabel functionLabel;
-    JLabel departmentLabel;
+    JLabel functionLabel;    
     JLabel salaryLabel;
     JTextField secondNameText;
     JTextField firstNameText;
@@ -48,8 +47,7 @@ public class AddEmployeeFrame extends JFrame {
         this.f = new Font("TimesRoman", Font.BOLD,15);
         this.secondNameLabel = new JLabel("Last name");
         this.firstNameLabel = new JLabel("First name");
-        this.functionLabel = new JLabel("Function");
-        this.departmentLabel = new JLabel("Department");
+        this.functionLabel = new JLabel("Function");       
         this.salaryLabel = new JLabel("Salary");
         this.secondNameText = new JTextField();
         this.firstNameText = new JTextField();
@@ -63,7 +61,6 @@ public class AddEmployeeFrame extends JFrame {
         mainPanel.add(firstNameText);
         mainPanel.add(functionLabel);
         mainPanel.add(functionText);
-        mainPanel.add(departmentLabel);
         mainPanel.add(departmentText);
         mainPanel.add(salaryLabel);
         mainPanel.add(salaryText);
