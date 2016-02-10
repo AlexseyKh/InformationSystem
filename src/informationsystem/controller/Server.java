@@ -2,6 +2,7 @@ package informationsystem.controller;
 
 
 
+import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 
 import java.io.IOException;
@@ -17,20 +18,15 @@ public class Server {
     private static Controller controller = new Controller();
 
     public static void main(String[] args) throws IOException {
-        ServerSocket ss = new ServerSocket(PORT);
-        try {
-            while(true) {
+        try (ServerSocket ss = new ServerSocket(PORT)) {
+            while (true) {
                 Socket s = ss.accept();
-                try{
+                try {
                     new ServerThread(s);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     s.close();
                 }
             }
-        }
-        finally{
-            ss.close();
         }
     }
 
@@ -65,13 +61,25 @@ public class Server {
                         delDepI();
                     if(str.equals("delDepS"))
                         delDepS();
+                    if(str.equals("getCompanyName"))
+                        getCompanyName();
+                    if(str.equals("getDepartmentName"))
+                        getDepartmentName();
+                    if(str.equals("departmentCount"))
+                        departmentCount();
+                    if(str.equals("getDepS")) //возвращает департамент по его названию (S - string)
+                        getDepS();
+                    if(str.equals("getDepI")) //возвращает департамент по его названию (S - string)
+                        getDepI();
+                    if(str.equals("getAllDepartments")) //возвращает департамент по его названию (S - string)
+                        getAllDepartments();
                     if(str.equals("getEmployee"))
                         getEmployee();
                     if(str.equals("getAllEmployees"))
                         getAllEmployees();
                     if(str.equals("getEmployeesOfDepartmentByName"))
                         getEmployeesOfDepartmentByName();
-                    if(str.equals("getEmployeesOfDepartmentByName"))
+                    if(str.equals("getEmployeesOfDepartmentById"))
                         getEmployeesOfDepartmentById();
                     if(str.equals("addEmployee"))
                         addEmployee();
@@ -81,13 +89,9 @@ public class Server {
 
                 }
             }
-            catch (ClassNotFoundException e) {
+            catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
+            } finally {
                 try {
                     in.close();
                     out.close();
@@ -97,6 +101,35 @@ public class Server {
                     System.err.println("Socket not closed");
                 }
             }
+        }
+
+        private void getAllDepartments() throws IOException {
+            Department[] deps = controller.getAllDepartments();
+            out.writeObject(deps);
+        }
+
+        private void getDepI() throws IOException, ClassNotFoundException {
+            int departmentId = (int) in.readObject();
+            Department dep = controller.getDepartment(departmentId);
+            out.writeObject(dep);
+        }
+
+        private void getDepartmentName() {
+        }
+
+        private void departmentCount() throws IOException {
+            out.writeObject(controller.departmentCount());
+        }
+
+        private void getCompanyName() throws IOException {
+            String companyName = controller.getCompanyName();
+            out.writeObject(companyName);
+        }
+
+        private void getDepS() throws IOException, ClassNotFoundException {
+            String departmentName = (String) in.readObject();
+            Department dep = controller.getDepartment(departmentName);
+            out.writeObject(dep);
         }
 
         private void createCS() throws IOException, ClassNotFoundException {
