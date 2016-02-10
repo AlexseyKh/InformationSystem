@@ -12,6 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -21,7 +27,7 @@ import javax.swing.tree.*;
  * @author Алексей
  */
 public class Frame1 extends JFrame {
-    Controller con;
+    //Controller con;
     JPanel mainPanel;
     JMenuBar menuBar;
     JMenu menuFile;
@@ -31,66 +37,102 @@ public class Frame1 extends JFrame {
     JTree jt;
     Frame1 mainFrame = this;
     JScrollPane jsp;
-    
-    public Frame1() {
-       
-        //menubar
-        menuBar = new JMenuBar();
-        menuFile = new JMenu("File");
-        companyUpItem = new JMenuItem("Import XML..");
-        companyDownItem = new JMenuItem("Export XML..");
-        menuFile.add(companyUpItem);
-        menuFile.add(companyDownItem);
-        menuBar.add(menuFile);        
-             
+    public static final int PORT = 7777;
+    static ObjectOutputStream objOut;
+    static ObjectInputStream objIn;
 
-        this.setJMenuBar(menuBar);
-        this.setBounds(100,100,400,400);        
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);          
-        this.setTitle("Information System");
-        this.setVisible(true);
-        
-        companyUpItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-                    boolean res = false;
-                    JFileChooser f = new JFileChooser();
-                    f.setMultiSelectionEnabled(false);
-                    f.showDialog(null, "Open ");
-                    con = new Controller();
-                    con.createCompanyFromXML(f.getSelectedFile().getPath()); 
-                    createTree();
 
-                
-                
-                
+
+    public Frame1() throws IOException {
+        InetAddress addr = InetAddress.getLocalHost();
+        Socket s = new Socket(addr, PORT);
+        try {
+            objOut = new ObjectOutputStream(s.getOutputStream());
+            objIn = new ObjectInputStream(s.getInputStream());
+            try {
+                menuBar = new JMenuBar();
+                menuFile = new JMenu("File");
+                companyUpItem = new JMenuItem("Import XML..");
+                companyDownItem = new JMenuItem("Export XML..");
+                menuFile.add(companyUpItem);
+                menuFile.add(companyDownItem);
+                menuBar.add(menuFile);
+
+
+                this.setJMenuBar(menuBar);
+                this.setBounds(100, 100, 400, 400);
+                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                this.setTitle("Information System");
+                this.setVisible(true);
+
+                companyUpItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        boolean res = false;
+                        JFileChooser f = new JFileChooser();
+                        f.setMultiSelectionEnabled(false);
+                        f.showDialog(null, "Open ");
+                        try {
+                            objOut.writeObject("createCF");
+                            objOut.writeObject(f.getSelectedFile().getPath());
+                            createTree();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        } catch (ClassNotFoundException e1) {
+                            e1.printStackTrace();
+                        }
+
+
+                    }
+                });
+                companyDownItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        JFileChooser f = new JFileChooser("Save as..");
+                        f.showSaveDialog(null);
+                        try {
+                            objOut.writeObject("save");
+                            objOut.writeObject(f.getSelectedFile().getPath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                });
             }
-        });
-        companyDownItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {  
-                JFileChooser f = new JFileChooser("Save as..");
-                f.showSaveDialog(null);
-                con.saveCompanyToXML(f.getSelectedFile().getPath());
-                
-            }                        
-        });
-        
-        
-      }
-    public void createTree(){
+            finally{
+                objOut.writeObject("end");
+                s.close();
+            }
+        }
+        catch (IOException e) {
+                e.getMessage();
+        }
+
+    }
+
+    public void createTree() throws IOException, ClassNotFoundException {
                     if(jsp != null){
                         mainFrame.remove(jsp);
                         mainFrame.revalidate();
                         mainFrame.repaint();
                     }
-                    level0 =  new DefaultMutableTreeNode(con.getCompanyName());
+                objOut.writeObject("getCompanyName");
+                String companyName = (String) objIn.readObject();
+                    level0 =  new DefaultMutableTreeNode(companyName);
                     jt = new JTree(level0);
-                    DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[con.departmentCount()];              
-                    for(int i = 0; i < departments.length; i++){                    
-                        departments[i] = new DefaultMutableTreeNode(con.getDepartment(i).getName());
-                        Department[] deps = con.getAllDepartments();
+                    objOut.writeObject("departmentCount");
+                    int numberOfDep = (int) objIn.readObject();
+                    DefaultMutableTreeNode[] departments = new DefaultMutableTreeNode[numberOfDep];
+                    for(int i = 0; i < departments.length; i++){
+                        objOut.writeObject("getDepI");
+                        objOut.writeObject(i);
+                        Department dep = (Department) objIn.readObject();
+                        departments[i] = new DefaultMutableTreeNode(dep.getName());
+                        objOut.writeObject("getAllDepartments");
+                        Department[] deps = (Department[]) objIn.readObject();
                         for(int j = 0; j < deps[i].getEmployeeCount(); j++){
                             DefaultMutableTreeNode employee = new DefaultMutableTreeNode(j+1);                            
                             departments[i].add(employee);
@@ -101,13 +143,30 @@ public class Frame1 extends JFrame {
                         JPopupMenu popup;
                         @Override
                         public void mouseClicked(MouseEvent me) {
-                            TreePath tp = jt.getPathForLocation(me.getX(), me.getY());
+                            final TreePath tp = jt.getPathForLocation(me.getX(), me.getY());
                             if (tp != null && tp.getPathCount() == 3 && me.getClickCount() == 2){
                                 String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                 int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
 
-                                    Employee emp = con.getEmployeesOfDepartment(departmentName)[employeeId - 1];
-                                    //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+
+                                try {
+                                    objOut.writeObject("getEmployeesOfDepartmentByName");
+                                    objOut.writeObject(departmentName);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Employee[] emps = new Employee[0];
+                                try {
+                                    emps = (Employee[]) objIn.readObject();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                                Employee emp = emps[employeeId - 1];
+
+                                //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
                                     new Frame2(emp);                                                 
                                                        
                             }
@@ -124,9 +183,24 @@ public class Frame1 extends JFrame {
                                     public void actionPerformed(ActionEvent e) {
                                             String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                             int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
+                                        try {
+                                            objOut.writeObject("getEmployeesOfDepartmentByName");
+                                            objOut.writeObject(departmentName);
+                                        } catch (IOException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                        Employee[] emps = new Employee[0];
+                                        Employee emp = null;
+                                        try {
+                                            emps = (Employee[]) objIn.readObject();
+                                            emp = emps[employeeId - 1];
+                                        } catch (IOException e1) {
+                                            e1.printStackTrace();
+                                        } catch (ClassNotFoundException e1) {
+                                            e1.printStackTrace();
+                                        }
 
-                                                Employee emp = con.getEmployeesOfDepartment(departmentName)[employeeId - 1];
-                                                //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
+                                        //Employee emp =con.getDepartment(departmentName).getEmployee(employeeId - 1);
                                                 new Frame2(emp);                                                 
        
                                     }
@@ -138,11 +212,33 @@ public class Frame1 extends JFrame {
                                         if(JOptionPane.showConfirmDialog(mainFrame, "Удалить сотрудника?") == 0){
                                             String departmentName = tp.getParentPath().getLastPathComponent().toString();
                                             int employeeId = Integer.valueOf(tp.getLastPathComponent().toString());
+                                            Employee[] emps = new Employee[0];
+                                            try {
+                                                objOut.writeObject("getEmployeesOfDepartmentByName");
+                                                objOut.writeObject(departmentName);
+                                                emps = (Employee[]) objIn.readObject();
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            } catch (ClassNotFoundException e1) {
+                                                e1.printStackTrace();
+                                            }
 
-                                                long id = con.getEmployeesOfDepartment(departmentName)[employeeId - 1].getId();
-                                                con.deleteEmployee(id);
-                                                //con.getDepartment(departmentName).deleteEmployee(employeeId - 1); 
+                                            long id = emps[employeeId - 1].getId();
+
+                                            try {
+                                                objOut.writeObject("deleteEmployee");
+                                                objOut.writeObject(id);
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                            //con.getDepartment(departmentName).deleteEmployee(employeeId - 1);
+                                            try {
                                                 createTree();
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            } catch (ClassNotFoundException e1) {
+                                                e1.printStackTrace();
+                                            }
                                         }
                                     }
                                 });
@@ -161,8 +257,20 @@ public class Frame1 extends JFrame {
                                         if(JOptionPane.showConfirmDialog(mainFrame, "Удалить отдел?") == 0){
 
                                                 String departmentName = tp.getLastPathComponent().toString();
-                                                con.deleteDepartment(departmentName);
+                                            try {
+                                                objOut.writeObject("deleteDepS");
+                                                objOut.writeObject(departmentName);
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            }
+
+                                            try {
                                                 createTree();
+                                            } catch (IOException e1) {
+                                                e1.printStackTrace();
+                                            } catch (ClassNotFoundException e1) {
+                                                e1.printStackTrace();
+                                            }
 
                                         }
                                     }
@@ -172,8 +280,19 @@ public class Frame1 extends JFrame {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
                                         
-                                            String departmentName = tp.getLastPathComponent().toString();   
-                                            new Frame2(con.getDepartment(departmentName));
+                                            String departmentName = tp.getLastPathComponent().toString();
+                                            Department dep = null;
+                                        try {
+                                            objOut.writeObject("getDepS");
+                                            objOut.writeObject(departmentName);
+                                            dep = (Department) objIn.readObject();
+                                        } catch (IOException e1) {
+                                            e1.printStackTrace();
+                                        } catch (ClassNotFoundException e1) {
+                                            e1.printStackTrace();
+                                        }
+
+                                        new Frame2(dep);
                                         
                                         
                                     }
