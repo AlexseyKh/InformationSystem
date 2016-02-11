@@ -6,11 +6,16 @@
 package informationsystem;
 
 import informationsystem.controller.Controller;
+import informationsystem.model.dataClasses.Department;
+
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javax.swing.*;
 
 /**
@@ -38,7 +43,7 @@ public class AddEmployeeFrame extends JFrame {
     Controller c;
     long id;
 
-    public AddEmployeeFrame(Controller c, long id, FrameTable mainFrame) { 
+    public AddEmployeeFrame(final ObjectOutputStream objOut, final ObjectInputStream objIn, final long id, final FrameTable mainFrame) {
         thisFrame = this;
         this.c = c;
         this.id = id;
@@ -68,9 +73,22 @@ public class AddEmployeeFrame extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                c.addEmployee(c.getDepartment(id).getName(), firstNameText.getText(), secondNameText.getText(), functionText.getText(), Integer.valueOf(salaryText.getText()));   
-                mainFrame.createEmployeeTable(id);
-                processWindowEvent(new WindowEvent(thisFrame,WindowEvent.WINDOW_CLOSING));
+                //c.addEmployee(c.getDepartment(id).getName(), firstNameText.getText(), secondNameText.getText(), functionText.getText(), Integer.valueOf(salaryText.getText()));
+                Department dep = null;
+                try {
+                    objOut.writeObject("getDepS");
+                    dep = (Department) objIn.readObject();
+                    objOut.writeObject("addEmployee");
+                    objOut.writeObject(dep.getName());
+                    objOut.writeObject(firstNameText.getText());
+                    objOut.writeObject(secondNameText.getText());
+                    objOut.writeObject(functionText.getText());
+                    objOut.writeObject(Integer.valueOf(salaryText.getText()));
+                    mainFrame.createEmployeeTable(id);
+                    processWindowEvent(new WindowEvent(thisFrame, WindowEvent.WINDOW_CLOSING));
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
         this.add(mainPanel);        

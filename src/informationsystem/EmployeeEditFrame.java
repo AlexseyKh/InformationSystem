@@ -39,7 +39,7 @@ public class EmployeeEditFrame extends JFrame{
     Controller c;
     long id;
 
-    public EmployeeEditFrame(Employee emp, FrameTable mainFrame) { 
+    public EmployeeEditFrame(final Employee emp, final FrameTable mainFrame) {
         thisFrame = this;    
         mainPanel = new JPanel(new GridLayout(6,2));
         buttonPanel = new JPanel();

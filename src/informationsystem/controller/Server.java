@@ -18,7 +18,8 @@ public class Server {
     private static Controller controller = new Controller();
 
     public static void main(String[] args) throws IOException {
-        try (ServerSocket ss = new ServerSocket(PORT)) {
+        ServerSocket ss = new ServerSocket(PORT);
+        try {
             while (true) {
                 Socket s = ss.accept();
                 try {
@@ -26,9 +27,14 @@ public class Server {
                 } catch (IOException e) {
                     s.close();
                 }
+
             }
         }
+        finally{
+            ss.close();
+        }
     }
+
 
 
     private static class ServerThread extends Thread {
@@ -86,12 +92,13 @@ public class Server {
                     if(str.equals("deleteEmployee"))
                         delEmployee();
                     if(str.equals("end")) return;
-
+                    out.flush();
                 }
             }
             catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
-            } finally {
+            }
+            finally {
                 try {
                     in.close();
                     out.close();
@@ -109,7 +116,7 @@ public class Server {
         }
 
         private void getDepI() throws IOException, ClassNotFoundException {
-            int departmentId = (int) in.readObject();
+            Long departmentId = (Long) in.readObject();
             Department dep = controller.getDepartment(departmentId);
             out.writeObject(dep);
         }
@@ -135,48 +142,50 @@ public class Server {
         private void createCS() throws IOException, ClassNotFoundException {
             String companyName = (String)in.readObject();
             controller.createCompany(companyName);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
 
         private void createCF() throws IOException, ClassNotFoundException {
             String fileName = (String) in.readObject();
-            controller.createCompany(fileName);
-            out.writeObject("complete");
+            controller.createCompanyFromXML(fileName);
+            //out.writeObject("complete");
         }
 
         private void save() throws IOException, ClassNotFoundException {
             String fileName = (String) in.readObject();
             controller.saveCompanyToXML(fileName);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
 
         private void addDep() throws IOException, ClassNotFoundException {
             String depName = (String) in.readObject();
+            //System.out.println(depName);
             controller.addDepartment(depName);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
 
         private void delDepI() throws IOException, ClassNotFoundException {
-            int id = Integer.parseInt((String)in.readObject());
+            Long id = Long.parseLong((String)in.readObject());
             controller.deleteDepartment(id);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
 
         private void delDepS() throws IOException, ClassNotFoundException {
             String depName = (String) in.readObject();
             controller.deleteDepartment(depName);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
 
         private void getEmployee() throws IOException, ClassNotFoundException {
 
-            int id = Integer.parseInt((String)in.readObject());
+            Long id = Long.parseLong((String)in.readObject());
             Employee emp = controller.getEmployee(id);
             out.writeObject(emp);
         }
 
         private void getAllEmployees() throws IOException, ClassNotFoundException {
             Employee[] emps = controller.getAllEmployees();
+            //System.out.println(emps[0].getFirstName());
             out.writeObject(emps);
         }
         private void getEmployeesOfDepartmentByName() throws IOException, ClassNotFoundException {
@@ -186,7 +195,7 @@ public class Server {
         }
 
         private void getEmployeesOfDepartmentById() throws IOException, ClassNotFoundException {
-            int id = Integer.parseInt((String)in.readObject());
+            long id = (Long)in.readObject();
             Employee[] depEmps = controller.getEmployeesOfDepartment(id);
             out.writeObject(depEmps);
         }
@@ -197,12 +206,12 @@ public class Server {
             String function = (String)in.readObject();
             int salary = Integer.parseInt((String) in.readObject());
             controller.addEmployee(depName, firstName, secondName, function, salary);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
         private void delEmployee() throws IOException, ClassNotFoundException {
             int employeeId = Integer.parseInt((String)in.readObject());
             controller.deleteEmployee(employeeId);
-            out.writeObject("complete");
+            //out.writeObject("complete");
         }
     }
 }

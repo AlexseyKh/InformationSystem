@@ -13,6 +13,11 @@ import informationsystem.model.dataClasses.Employee;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -42,11 +47,18 @@ public class FrameTable extends JFrame {
     JButton addEmp;
     JButton viewAllEmp;
     JFrame thisFrame;
-    
+    public static ObjectOutputStream objOut;
+    public static ObjectInputStream objIn;
+    public static final int PORT = 7777;
+
     long currdep = -1;
 
-    public FrameTable() {
-        //Инициализация      
+    public FrameTable() throws IOException {
+        //Инициализация
+        InetAddress addr = InetAddress.getLocalHost();
+        Socket s = new Socket(addr, PORT);
+        objOut = new ObjectOutputStream(s.getOutputStream());
+        objIn = new ObjectInputStream(s.getInputStream());
         departmentPanel = new JPanel(new GridBagLayout());
         chgDepartmentPanel = new JPanel(new GridLayout(1, 3));
         employeePanel = new JPanel(new GridBagLayout());
@@ -86,9 +98,14 @@ public class FrameTable extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String s = JOptionPane.showInputDialog("Enter a name for department");
-                if(!"".equals(s)){                
-                con.addDepartment(s);
-                createDepartmentTable();
+                if(!"".equals(s)){
+                    try {
+                        objOut.writeObject("addDep");
+                        objOut.writeObject(s);
+                        createDepartmentTable();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {JOptionPane.showMessageDialog(rootPane, "Error name!"); }
             }
         });
@@ -99,7 +116,7 @@ public class FrameTable extends JFrame {
         addEmp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                JFrame fr = new AddEmployeeFrame(con, currdep,(FrameTable)thisFrame);  
+                JFrame fr = new AddEmployeeFrame(objOut, objIn, currdep,(FrameTable)thisFrame);
             }
         });
         addEmp.setEnabled(false);
@@ -126,11 +143,18 @@ public class FrameTable extends JFrame {
                 JFileChooser f = new JFileChooser();
                 f.setMultiSelectionEnabled(false);
                 f.showDialog(null, "Open ");
-                con = new Controller();
-                con.createCompanyFromXML(f.getSelectedFile().getPath());
-                createDepartmentTable();
-                createEmployeeTable(-1);
-                
+                //con = new Controller();
+                //con.createCompanyFromXML(f.getSelectedFile().getPath());
+                try {
+                    objOut.writeObject("createCF");
+                    objOut.writeObject(f.getSelectedFile().getPath());
+                    createDepartmentTable();
+                    createEmployeeTable(-1);
+                }
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
             }
         });
         companyDownItem.addActionListener(new ActionListener() {
@@ -138,7 +162,13 @@ public class FrameTable extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 JFileChooser f = new JFileChooser("Save as..");
                 f.showSaveDialog(null);
-                con.saveCompanyToXML(f.getSelectedFile().getPath());
+                //con.saveCompanyToXML(f.getSelectedFile().getPath());
+                try {
+                    objOut.writeObject("save");
+                    objOut.writeObject(f.getSelectedFile().getPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -147,10 +177,17 @@ public class FrameTable extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 String s = JOptionPane.showInputDialog("Enter a name for company");
                 if(!"".equals(s)){
-                con = new Controller();
-                con.createCompany(s);
-                createEmployeeTable(-1);
-                createDepartmentTable();
+                //con = new Controller();
+                //con.createCompany(s);
+                    try {
+                        objOut.writeObject("createCS");
+                        objOut.writeObject(s);
+                        createEmployeeTable(-1);
+                        createDepartmentTable();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 else{
                     JOptionPane.showMessageDialog(rootPane, "Error name");
@@ -171,12 +208,28 @@ public class FrameTable extends JFrame {
     }
     
     public  void createEmployeeTable(long id){
-        DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0); 
-        Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
-        for (Employee emp : emps) {
-            empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
+        DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0);
+        Employee[] allEmps = null;
+        Employee[] empsOfDep = null;
+        try {
+            objOut.writeObject("getAllEmployees");
+            allEmps = (Employee[]) objIn.readObject();
+            objOut.writeObject("getEmployeesOfDepartmentById");
+            objOut.writeObject(id);
+            empsOfDep = (Employee[]) objIn.readObject();
+            Employee[] emps = (id == -1) ? allEmps : empsOfDep;
+            for (Employee emp : emps) {
+                empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
+            }
+            employeeTable.setModel(empModel);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        employeeTable.setModel(empModel);
+        //Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
+
+
         TableButton delEmp = new TableButton("Delete");
         TableColumn tcDelEmp = new TableColumn();
         tcDelEmp.setHeaderValue("Delete");
@@ -184,8 +237,16 @@ public class FrameTable extends JFrame {
             @Override
             public void tableButtonClicked(int row, int col) {
                 long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
-                con.deleteEmployee(id);
-                ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
+                //con.deleteEmployee(id);
+                //((DefaultTableModel) employeeTable.getModel()).removeRow(row);
+                try {
+                    objOut.writeObject("deleteEmployee");
+                    objOut.writeObject(id);
+                    ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         tcDelEmp.setCellEditor(delEmp);
@@ -198,7 +259,16 @@ public class FrameTable extends JFrame {
             @Override
             public void tableButtonClicked(int row, int col) {
                 long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
-                new EmployeeEditFrame(con.getEmployee(id), (FrameTable) thisFrame);
+                Employee emp = null;
+                try {
+                    objOut.writeObject("getEmployee");
+                    objOut.writeObject(id);
+                    emp = (Employee)objIn.readObject();
+                } catch (IOException | ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                }
+                new EmployeeEditFrame(emp, (FrameTable) thisFrame);
+                //new EmployeeEditFrame(con.getEmployee(id), (FrameTable) thisFrame);
             }
         });
         tcEditEmp.setCellEditor(editEmp);
@@ -208,7 +278,14 @@ public class FrameTable extends JFrame {
     
     public  void createDepartmentTable(){
         DefaultTableModel depModel = new DefaultTableModel(new String[]{"ID","Name", "Director ID"}, 0);
-        Department[] deps = con.getAllDepartments();
+        //Department[] deps = con.getAllDepartments();
+        Department[] deps = null;
+        try {
+            objOut.writeObject("getAllDepartments");
+            deps = (Department[])objIn.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         for (Department dep : deps) {
             depModel.addRow(new String[]{String.valueOf(dep.getId()), String.valueOf(dep.getName()), String.valueOf(dep.getDirectorId())});
         }
@@ -219,8 +296,15 @@ public class FrameTable extends JFrame {
         delDep.addTableButtonListener(new TableButtonListener() {
             @Override
             public void tableButtonClicked(int row, int col) {
-                con.deleteDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
-                ((DefaultTableModel) departmentTable.getModel()).removeRow(row);
+                //con.deleteDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
+                //((DefaultTableModel) departmentTable.getModel()).removeRow(row);
+                try {
+                    objOut.writeObject("deleteDepS");
+                    objOut.writeObject(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
+                    ((DefaultTableModel) departmentTable.getModel()).removeRow(row);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         tcDelDep.setCellEditor(delDep);
@@ -232,8 +316,17 @@ public class FrameTable extends JFrame {
         editDep.addTableButtonListener(new TableButtonListener() {
             @Override
             public void tableButtonClicked(int row, int col) {
-                Department d = con.getDepartment((String) departmentTable.getModel().getValueAt(row, 1));
-                new EditDepartmentFrame(d, (FrameTable) thisFrame);
+                //Department d = con.getDepartment((String) departmentTable.getModel().getValueAt(row, 1));
+                //new EditDepartmentFrame(d, (FrameTable) thisFrame);
+                try {
+                    objOut.writeObject("getDepS");
+                    Department d = (Department)objIn.readObject();
+                    new EditDepartmentFrame(d, (FrameTable) thisFrame);
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.out.println("p");
+                }
+
 
             }
         });

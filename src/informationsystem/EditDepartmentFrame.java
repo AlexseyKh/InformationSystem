@@ -25,7 +25,7 @@ public class EditDepartmentFrame extends JFrame {
     JButton saveButton;
     FrameTable mainFrame;
     
-    public EditDepartmentFrame(Department dep, FrameTable mainFrame) {
+    public EditDepartmentFrame(final Department dep, final FrameTable mainFrame) {
         this.mainFrame = mainFrame;
         mainPanel = new JPanel(new GridLayout(3,2));
         nameLabel = new JLabel("Name");
