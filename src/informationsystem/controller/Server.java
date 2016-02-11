@@ -15,10 +15,11 @@ import java.net.Socket;
 
 public class Server {
     public static final int PORT = 7777;
-    private static Controller controller = new Controller();
+    private static Controller controller = new ControllerXML();
 
     public static void main(String[] args) throws IOException {
         ServerSocket ss = new ServerSocket(PORT);
+        //controller.readData("Z:\\Courses\\InformationSystem\\server_data.xml");
         try {
             while (true) {
                 Socket s = ss.accept();
@@ -73,11 +74,11 @@ public class Server {
                         getDepartmentName();
                     if(str.equals("departmentCount"))
                         departmentCount();
-                    if(str.equals("getDepS")) //возвращает департамент по его названию (S - string)
+                    if(str.equals("getDepS")) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (S - string)
                         getDepS();
-                    if(str.equals("getDepI")) //возвращает департамент по его названию (S - string)
+                    if(str.equals("getDepI")) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (S - string)
                         getDepI();
-                    if(str.equals("getAllDepartments")) //возвращает департамент по его названию (S - string)
+                    if(str.equals("getAllDepartments")) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (S - string)
                         getAllDepartments();
                     if(str.equals("getEmployee"))
                         getEmployee();
@@ -147,13 +148,13 @@ public class Server {
 
         private void createCF() throws IOException, ClassNotFoundException {
             String fileName = (String) in.readObject();
-            controller.createCompanyFromXML(fileName);
+            controller.readData(fileName);
             //out.writeObject("complete");
         }
 
         private void save() throws IOException, ClassNotFoundException {
             String fileName = (String) in.readObject();
-            controller.saveCompanyToXML(fileName);
+            controller.saveData(fileName);
             //out.writeObject("complete");
         }
 

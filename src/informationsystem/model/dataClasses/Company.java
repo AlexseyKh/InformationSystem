@@ -6,12 +6,7 @@
 package informationsystem.model.dataClasses;
 
 import informationsystem.model.dataClasses.*;
-import java.io.*;
-import java.util.ArrayList;
-import informationsystem.exceptions.*;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 
 /**
@@ -19,7 +14,7 @@ import javax.xml.bind.annotation.*;
  * @author Игорь
  */
     @XmlRootElement
-    public class Company {
+    public class Company implements java.io.Serializable{
         
     private LinkedHashSet<Department> departments;
     private String name;

@@ -6,7 +6,6 @@
 package informationsystem.model.dataClasses;
 
 import java.util.ArrayList;
-import informationsystem.exceptions.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -19,7 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Игорь
  */
-public class Department {
+public class Department implements java.io.Serializable{
 
     @XmlElement
     private long id;

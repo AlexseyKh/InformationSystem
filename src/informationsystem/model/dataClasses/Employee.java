@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
  *
  * @author Игорь
  */
-public class Employee {
+public class Employee implements java.io.Serializable{
 
     @XmlElement
     private long id;

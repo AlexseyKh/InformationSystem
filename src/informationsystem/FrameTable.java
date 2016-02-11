@@ -6,8 +6,6 @@
 package informationsystem;
 
 import informationsystem.controller.Controller;
-import informationsystem.exceptions.DepartmentWithSuchNameDoesNotExist;
-import informationsystem.exceptions.UncorrectXML;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 import java.awt.*;

@@ -5,7 +5,7 @@
  */
 package informationsystem;
 
-import informationsystem.controller.Controller;
+import informationsystem.controller.ControllerXML;
 import informationsystem.model.dataClasses.Department;
 
 import java.awt.Font;
@@ -40,7 +40,7 @@ public class AddEmployeeFrame extends JFrame {
     JFrame thisFrame;
     JFrame mainFrame;
     
-    Controller c;
+    ControllerXML c;
     long id;
 
     public AddEmployeeFrame(final ObjectOutputStream objOut, final ObjectInputStream objIn, final long id, final FrameTable mainFrame) {
