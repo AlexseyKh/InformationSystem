@@ -73,9 +73,9 @@ public class Server {
                         getCompanyName();
                     if (str.equals("departmentCount"))
                         departmentCount();
-                    if (str.equals("getDepS")) //возвращает департамент по его названию (S - string)
+                    if (str.equals("getDepS")) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (S - string)
                         getDepS();
-                    if (str.equals("getDepI")) //возвращает департамент по его названию (S - string)
+                    if (str.equals("getDepI")) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (S - string)
                         getDepI();
                     if (str.equals("getAllDepartments"))
                         getAllDepartments();
@@ -174,7 +174,7 @@ public class Server {
 
         private void delDepI() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delDepI");
-            Long id = (Long)in.readObject();
+            long id = (long)in.readObject();
             controller.deleteDepartment(id);
             //out.writeObject("complete");
         }
@@ -188,27 +188,27 @@ public class Server {
 
         private void getEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployee");
-            Long id = Long.parseLong((String)in.readObject());
+            long id = (long)in.readObject();
             Employee emp = controller.getEmployee(id);
             out.writeObject(emp);
         }
 
         private void getAllEmployees() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getAllEmployees");
-            Employee[] emps = controller.getAllEmployees(); // здесь не получает из контроллера сотрудников, при этом работает getAllDepartments
+            Employee[] emps = controller.getAllEmployees(); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ getAllDepartments
             out.writeObject(emps);
         }
         private void getEmployeesOfDepartmentByName() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentByName");
             String name = (String)in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartment(name); // здесь не получает из контроллера сотрудников
+            Employee[] depEmps = controller.getEmployeesOfDepartment(name); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             out.writeObject(depEmps);
         }
 
         private void getEmployeesOfDepartmentById() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentById");
-            long id = (Long)in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartmentById(id); // здесь не получает из контроллера сотрудников
+            long id = (long)in.readObject();
+            Employee[] depEmps = controller.getEmployeesOfDepartmentById(id); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             out.writeObject(depEmps);
         }
         private void addEmployee() throws IOException, ClassNotFoundException {
@@ -228,7 +228,7 @@ public class Server {
         }
         private void delEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delEmployee");
-            int employeeId = Integer.parseInt((String)in.readObject());
+            long employeeId = (long)in.readObject();
             controller.deleteEmployee(employeeId);
             //out.writeObject("complete");
         }

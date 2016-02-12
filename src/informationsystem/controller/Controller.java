@@ -210,7 +210,7 @@ public class Controller {
             String function, int salary) {
         System.out.println("|Controller|addEmployee| Got from server: "+departmentName+" "+firstName+" "+secondName+" "+function+" "+salary);
         for (Department dep : company.getDepartments()) {
-            if (dep.getName() == departmentName) {
+            if (dep.getName().equals(departmentName)) {
                 dep.getEmployees().add(new Employee(company.getIdSequenceForEmployees(),
                         firstName, secondName, function, salary));
                 company.setIdSequenceForEmployees(company.getIdSequenceForEmployees() + 1);
