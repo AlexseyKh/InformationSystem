@@ -40,12 +40,12 @@ public class AddEmployeeFrame extends JFrame {
     JFrame thisFrame;
     JFrame mainFrame;
     
-    Controller c;
+    //Controller c;
     long id;
 
     public AddEmployeeFrame(final ObjectOutputStream objOut, final ObjectInputStream objIn, final long id, final FrameTable mainFrame) {
         thisFrame = this;
-        this.c = c;
+        //this.c = c;
         this.id = id;
         mainPanel = new JPanel(new GridLayout(6,2));
         buttonPanel = new JPanel();
@@ -66,9 +66,9 @@ public class AddEmployeeFrame extends JFrame {
         mainPanel.add(firstNameText);
         mainPanel.add(functionLabel);
         mainPanel.add(functionText);
-        mainPanel.add(departmentText);
         mainPanel.add(salaryLabel);
         mainPanel.add(salaryText);
+        //mainPanel.add(departmentText);
         mainPanel.add(addButton);
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -76,8 +76,9 @@ public class AddEmployeeFrame extends JFrame {
                 //c.addEmployee(c.getDepartment(id).getName(), firstNameText.getText(), secondNameText.getText(), functionText.getText(), Integer.valueOf(salaryText.getText()));
                 Department dep = null;
                 try {
-                    objOut.writeObject("getDepS");
-                    dep = (Department) objIn.readObject();
+                    objOut.writeObject("getDepI");
+                    objOut.writeObject(id);
+                    dep = (Department)objIn.readObject();
                     objOut.writeObject("addEmployee");
                     objOut.writeObject(dep.getName());
                     objOut.writeObject(firstNameText.getText());

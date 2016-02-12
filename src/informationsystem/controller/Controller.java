@@ -127,6 +127,7 @@ public class Controller {
         for (Department dep : company.getDepartments()) {
             if (dep.getId() == id) {
                 company.getDepartments().remove(dep);
+                break;
             }
         }
     }
@@ -135,6 +136,7 @@ public class Controller {
         for (Department dep : company.getDepartments()) {
             if (dep.getName() == name) {
                 company.getDepartments().remove(dep);
+                break;
             }
         }
     }
@@ -183,13 +185,13 @@ public class Controller {
         for (Department dep : company.getDepartments()) {
             emps.addAll(dep.getEmployees());
         }
-        return (Employee[]) emps.toArray(new Employee[emps.size()]);
+        return emps.toArray(new Employee[emps.size()]);
     }
 
-    public Employee[] getEmployeesOfDepartment(long id) {
+    public Employee[] getEmployeesOfDepartmentById(long id) {
         for (Department dep : company.getDepartments()) {
             if (dep.getId() == id) {
-                return (Employee[]) dep.getEmployees().toArray(new Employee[dep.getEmployees().size()]);
+                return dep.getEmployees().toArray(new Employee[dep.getEmployees().size()]);
             }
         }
         return null;
@@ -198,7 +200,7 @@ public class Controller {
     public Employee[] getEmployeesOfDepartment(String name) {
         for (Department dep : company.getDepartments()) {
             if (dep.getName() == name) {
-                return (Employee[]) dep.getEmployees().toArray(new Employee[dep.getEmployees().size()]);
+                return dep.getEmployees().toArray(new Employee[dep.getEmployees().size()]);
             }
         }
         return null;
@@ -206,6 +208,7 @@ public class Controller {
 
     public void addEmployee(String departmentName, String firstName, String secondName,
             String function, int salary) {
+        System.out.println("|Controller|addEmployee| Got from server: "+departmentName+" "+firstName+" "+secondName+" "+function+" "+salary);
         for (Department dep : company.getDepartments()) {
             if (dep.getName() == departmentName) {
                 dep.getEmployees().add(new Employee(company.getIdSequenceForEmployees(),

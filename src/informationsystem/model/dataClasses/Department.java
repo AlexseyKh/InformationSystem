@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Игорь
  */
-public class Department {
+public class Department implements java.io.Serializable {
 
     @XmlElement
     private long id;

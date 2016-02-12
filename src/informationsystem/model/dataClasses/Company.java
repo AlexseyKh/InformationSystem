@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.*;
  * @author Игорь
  */
     @XmlRootElement
-    public class Company {
+    public class Company implements Serializable {
         
     private LinkedHashSet<Department> departments;
     private String name;
@@ -56,6 +56,7 @@ import javax.xml.bind.annotation.*;
     public LinkedHashSet<Department> getDepartments() {
         return departments;
     }
+
 
     /**
      * @param departments the departments to set

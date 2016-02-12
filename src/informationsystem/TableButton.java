@@ -8,6 +8,7 @@ package informationsystem;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.EventObject;
 import java.util.Vector;
 import javax.swing.JButton;
@@ -31,8 +32,14 @@ public class TableButton extends JButton implements TableCellRenderer, TableCell
     listener = new Vector<TableButtonListener>();
     addActionListener(new ActionListener() { 
       public void actionPerformed( ActionEvent e ) { 
-        for(TableButtonListener l : listener) { 
-          l.tableButtonClicked(selectedRow, selectedColumn);
+        for(TableButtonListener l : listener) {
+          try {
+            l.tableButtonClicked(selectedRow, selectedColumn);
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+          }
         }
       }
     });

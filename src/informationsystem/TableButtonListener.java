@@ -6,6 +6,7 @@
 package informationsystem;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.EventListener;
 
 /**
@@ -13,5 +14,5 @@ import java.util.EventListener;
  * @author Алексей
  */
 public interface TableButtonListener extends EventListener {
-  public void tableButtonClicked( int row, int col );
+  public void tableButtonClicked( int row, int col ) throws IOException, ClassNotFoundException;
 }

@@ -30,7 +30,7 @@ public class TestClass {
         Department[] deps = con.getAllDepartments();
         for(int i = 0; i < deps.length; i++){
             System.out.println(con.departmentCount());
-            Employee[] emps = con.getEmployeesOfDepartment(deps[i].getId());
+            Employee[] emps = con.getEmployeesOfDepartmentById(deps[i].getId());
             for(int j = 0; j < emps.length; j++){
                 System.out.println(i + ", " + j);
             

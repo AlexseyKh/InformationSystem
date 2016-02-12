@@ -39,7 +39,7 @@ public class Frame2 extends JFrame {
     JButton editButton = new JButton("Edit");
     JFrame thisFrame = this;
     
-    public Frame2(Employee emp) { 
+    public Frame2(final Employee emp) {
         
         panelInfo = new JPanel(new GridLayout(2,1)); 
         employeeImg = new ImagePanel();        

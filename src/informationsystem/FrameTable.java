@@ -102,10 +102,11 @@ public class FrameTable extends JFrame {
                     try {
                         objOut.writeObject("addDep");
                         objOut.writeObject(s);
-                        createDepartmentTable();
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    createDepartmentTable();
                 } else {JOptionPane.showMessageDialog(rootPane, "Error name!"); }
             }
         });
@@ -116,7 +117,7 @@ public class FrameTable extends JFrame {
         addEmp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                JFrame fr = new AddEmployeeFrame(objOut, objIn, currdep,(FrameTable)thisFrame);
+                JFrame fr = new AddEmployeeFrame(objOut, objIn, currdep, (FrameTable)thisFrame);
             }
         });
         addEmp.setEnabled(false);
@@ -213,22 +214,22 @@ public class FrameTable extends JFrame {
         Employee[] empsOfDep = null;
         try {
             objOut.writeObject("getAllEmployees");
-            allEmps = (Employee[]) objIn.readObject();
+            allEmps = (Employee[])objIn.readObject();
             objOut.writeObject("getEmployeesOfDepartmentById");
             objOut.writeObject(id);
-            empsOfDep = (Employee[]) objIn.readObject();
-            Employee[] emps = (id == -1) ? allEmps : empsOfDep;
-            for (Employee emp : emps) {
-                empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
-            }
-            employeeTable.setModel(empModel);
+            empsOfDep = (Employee[])objIn.readObject();
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         //Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
-
+        Employee[] emps = (id == -1) ? allEmps : empsOfDep;
+        for (Employee emp : emps) {
+            empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
+        }
+        employeeTable.setModel(empModel);
 
         TableButton delEmp = new TableButton("Delete");
         TableColumn tcDelEmp = new TableColumn();
@@ -299,7 +300,7 @@ public class FrameTable extends JFrame {
                 //con.deleteDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
                 //((DefaultTableModel) departmentTable.getModel()).removeRow(row);
                 try {
-                    objOut.writeObject("deleteDepS");
+                    objOut.writeObject("delDepI");
                     objOut.writeObject(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
                     ((DefaultTableModel) departmentTable.getModel()).removeRow(row);
                 } catch (IOException e1) {
@@ -318,13 +319,16 @@ public class FrameTable extends JFrame {
             public void tableButtonClicked(int row, int col) {
                 //Department d = con.getDepartment((String) departmentTable.getModel().getValueAt(row, 1));
                 //new EditDepartmentFrame(d, (FrameTable) thisFrame);
+
                 try {
-                    objOut.writeObject("getDepS");
-                    Department d = (Department)objIn.readObject();
+                    objOut.writeObject("getDepI");
+                    objOut.writeObject(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
+                    Department d = (Department) objIn.readObject();
+                    System.out.println(d.getName());
                     new EditDepartmentFrame(d, (FrameTable) thisFrame);
+
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
-                    System.out.println("p");
                 }
 
 
