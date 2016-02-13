@@ -6,7 +6,6 @@
 package informationsystem.model.dataClasses;
 
 import java.util.ArrayList;
-import informationsystem.exceptions.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -96,7 +95,6 @@ public class Department implements java.io.Serializable {
     public int hashCode(){
         int hash = 37;
         hash += 13*getName().hashCode();
-        hash += 13*getDirectorId();
         return hash;
     }
 

@@ -25,10 +25,10 @@ public class Employee implements java.io.Serializable {
         
     }
 
-    public Employee(long id, String firstName, String secondName, String function, int salary) {
+    public Employee(long id, String firstName, String lastName, String function, int salary) {
         this.id = id;
         this.firstName = firstName;
-        this.lastName = secondName;
+        this.lastName = lastName;
         this.function = function;
         this.salary = salary;
     }
@@ -110,6 +110,7 @@ public class Employee implements java.io.Serializable {
         hash += 11*getFirstName().hashCode();
         hash += 11*getLastName().hashCode();
         hash += 11*getSalary();
+        hash += 11*getFunction().hashCode();
         return hash;
     }
 
@@ -126,6 +127,12 @@ public class Employee implements java.io.Serializable {
             return false;
         }
         if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        if (!Objects.equals(this.function, other.function)) {
+            return false;
+        }
+        if (!Objects.equals(this.salary, other.salary)) {
             return false;
         }
         return true;

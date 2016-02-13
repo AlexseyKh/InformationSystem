@@ -5,8 +5,7 @@
  */
 package informationsystem;
 
-import informationsystem.controller.Controller;
-import informationsystem.exceptions.EmployeeWithSuchNameDoesNotExist;
+import informationsystem.controller.ControllerXML;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 
@@ -16,7 +15,7 @@ import informationsystem.model.dataClasses.Employee;
  */
 public class TestClass {
     public static void main(String[] args) {
-        Controller con = new Controller();
+        ControllerXML con = new ControllerXML();
         con.createCompany("BigCompany");
         con.addDepartment("BigDepart");
         con.addDepartment("BigDepart");
@@ -26,11 +25,11 @@ public class TestClass {
         con.addEmployee("BigDepart", "111", "111", "000", 1000);
         con.addEmployee("BigDepart", "333", "111", "000", 1000);
         con.addEmployee("SmallDepart", "444", "111", "000", 1000);
-        con.saveCompanyToXML("111.xml");
+        con.saveData("111.xml");
         Department[] deps = con.getAllDepartments();
         for(int i = 0; i < deps.length; i++){
             System.out.println(con.departmentCount());
-            Employee[] emps = con.getEmployeesOfDepartmentById(deps[i].getId());
+            Employee[] emps = con.getEmployeesOfDepartment(deps[i].getId());
             for(int j = 0; j < emps.length; j++){
                 System.out.println(i + ", " + j);
             

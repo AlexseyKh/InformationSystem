@@ -5,7 +5,7 @@
  */
 package informationsystem;
 
-import informationsystem.controller.Controller;
+import informationsystem.controller.ControllerXML;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
 import java.awt.event.ActionEvent;
