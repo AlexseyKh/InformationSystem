@@ -75,11 +75,11 @@ public class Server {
                     if (str.equals("departmentCount")) {
                         departmentCount();
                     }
-                    if (str.equals("getDepS")) //?????????? ??????????? ?? ??? ???????? (S - string)
+                    if (str.equals("getDepS"))
                     {
                         getDepS();
                     }
-                    if (str.equals("getDepI")) //?????????? ??????????? ?? ??? ???????? (S - string)
+                    if (str.equals("getDepI"))
                     {
                         getDepI();
                     }
@@ -128,12 +128,21 @@ public class Server {
             }
         }
 
+        /**
+         * <p>Метод, пишущий в выходной поток массив всех отделов компании
+         * Массив объектов класса Department получаем, вызывая метод getDepartment() из класса Controller, параметр - id</p>
+         */
         private void getAllDepartments() throws IOException {
             System.out.println("Started method: getAllDepartments");
             Department[] deps = controller.getAllDepartments();
             out.writeObject(deps);
         }
 
+        /**
+         * <p>Метод, пишущий в выходной поток отдел, выбранный по его id;
+         * id считывается из входного потока
+         * Объект класса Department получаем, вызывая метод getDepartment() из класса Controller, параметр - id</p>
+         */
         private void getDepI() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getDepI");
             Long departmentId = (Long) in.readObject();
@@ -141,17 +150,29 @@ public class Server {
             out.writeObject(dep);
         }
 
+        /**
+         * <p>Метод, пишущий в выходной количество отделов
+         * Количество отделов получаем, вызывая метод departmentCount из класса Controller</p>
+         */
         private void departmentCount() throws IOException {
             System.out.println("Started method: departmentCount");
             out.writeObject(controller.departmentCount());
         }
 
+        /**
+         * <p>Метод, пишущий в выходной поток название компании
+         * Название компании получаем, вызывая метод getCompanyName из класса Controller</p>
+         */
         private void getCompanyName() throws IOException {
             System.out.println("Started method: getCompanyName");
             String companyName = controller.getCompanyName();
             out.writeObject(companyName);
         }
 
+        /**
+         * <p>Метод, пишущий в выходной поток отдел, выбранный по его названию
+         * Объект класса Department получаем, вызывая метод getDepartment из класса Controller, параметр - название отдела</p>
+         */
         private void getDepS() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getDepS");
             String departmentName = (String) in.readObject();
@@ -162,6 +183,11 @@ public class Server {
             out.writeObject(dep);
         }
 
+        /**
+         * <p>Метод, создающий компанию по ее названию
+         * Название считывается из входящего потока
+         * Вызывает метод createCompany из класса Controller, в качестве параметра передается название компании</p>
+         */
         private void createCS() throws IOException, ClassNotFoundException {
             System.out.println("Started method: createCS");
             String companyName = (String) in.readObject();
@@ -169,6 +195,11 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, создающий компанию из файла
+         * Путь к файлу считывается из входного потока
+         * Вызывает метод скуфеуCompanyFromXML из класса Controller, в качестве параметра передается путь к файлу</p>
+         */
         private void createCF() throws IOException, ClassNotFoundException {
             System.out.println("Started method: createCF");
             String fileName = (String) in.readObject();
@@ -176,12 +207,22 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, сохраняющий компанию в файл
+         * Пусть к файлу считывается из входного потока
+         * Вызывает метод saveCompanyToXML из класса Controller, в качестве параметра передается путь к файлу</p>
+         */
         private void save() throws IOException, ClassNotFoundException {
             System.out.println("Started method: save");
             String fileName = (String) in.readObject();
             controller.saveData(fileName);
         }
 
+        /**
+         * <p>Метод, добавляющий отдел
+         * Название отдела считывается из входящего потока
+         * Вызывает метод addDepartment из класса Controller, в качестве параметра передается название компании</p>
+         */
         private void addDep() throws IOException, ClassNotFoundException {
             System.out.println("Started method: addDep");
             String depName = (String) in.readObject();
@@ -190,6 +231,11 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, удаляющий отдел, выбранный по его id
+         * id считывается из входного потока
+         * Вызывает метод deleteDepartment из класса Controller, в качестве параметра передается id компании</p>
+         */
         private void delDepI() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delDepI");
             long id = (long) in.readObject();
@@ -197,6 +243,11 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, удаляющий отдел, выбранный по его названию
+         * Название считывается из входного потока
+         * Вызывает метод deleteDepartment из класса Controller, в качестве параметра передается название компании</p>
+         */
         private void delDepS() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delDepS");
             String depName = (String) in.readObject();
@@ -204,6 +255,11 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, пищущий в выходной поток сотрудника, выбранного по его id
+         * id считывается из входного потока
+         * Объект класса Employee получаем, вызывая метод getEmployee из класса Controller</p>
+         */
         private void getEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployee");
             long id = (long) in.readObject();
@@ -211,26 +267,50 @@ public class Server {
             out.writeObject(emp);
         }
 
+        /**
+         * <p>Метод, пищущий в выходной массив всех сотрудников
+         * Массив получаем, вызывая метод getAllEmployees из класса Controller</p>
+         */
         private void getAllEmployees() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getAllEmployees");
-            Employee[] emps = controller.getAllEmployees(); // ????? ?? ???????? ?? ??????????? ???????????, ??? ???? ???????? getAllDepartments
+            Employee[] emps = controller.getAllEmployees();
             out.writeObject(emps);
         }
 
+        /**
+         * <p>Метод, пищущий в выходной массив сотрудников отдела, выбранного по его названию
+         * Название считывается из входного потока
+         * Массив получаем, вызывая метод getEmployeesOfDepartment из класса Controller</p>
+         */
         private void getEmployeesOfDepartmentByName() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentByName");
             String name = (String) in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartment(name); // ????? ?? ???????? ?? ??????????? ???????????
+            Employee[] depEmps = controller.getEmployeesOfDepartment(name);
             out.writeObject(depEmps);
         }
 
+        /**
+         * <p>Метод, пищущий в выходной массив сотрудников отдела, выбранного по его id
+         * id считывается из входного потока
+         * Массив получаем, вызывая метод getEmployeesOfDepartment из класса Controller</p>
+         */
         private void getEmployeesOfDepartmentById() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentById");
             long id = (long) in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartment(id); // ????? ?? ???????? ?? ??????????? ???????????
+            Employee[] depEmps = controller.getEmployeesOfDepartment(id);
             out.writeObject(depEmps);
         }
 
+        /**
+         * <p>Метод, добавляющий сотрудника
+         * Из входного потока считываются необходимые параметры:
+         * depName - имя отдела, в который добавляется сотрудник (тип String);
+         * firstName - имя сотрудника (тип String);
+         * secondName - фамилия (тип String);
+         * function - должность сотрудника (тип String);
+         * salary - зарплата сотрудника (тип int);
+         * Вызывает метод addEmployee из класса Controller</p>
+         */
         private void addEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: addEmployee");
             String depName = (String) in.readObject();
@@ -247,6 +327,11 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод, удаляющий сотрудника по его id
+         * id считывается из входного потока;
+         * Вызывает метод deleteEmployee из класса Controller</p>
+         */
         private void delEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delEmployee");
             long employeeId = (long) in.readObject();
@@ -254,6 +339,16 @@ public class Server {
             //out.writeObject("complete");
         }
 
+        /**
+         * <p>Метод изменения сотрудника
+         * Из входного потока считываются необходимые параметры:
+         * depName - имя отдела, в который добавляется сотрудник (тип String);
+         * firstName - имя сотрудника (тип String);
+         * secondName - фамилия (тип String);
+         * function - должность сотрудника (тип String);
+         * salary - зарплата сотрудника (тип int);
+         * Вызывает метод addEmployee из класса Controller</p>
+         */
         private void editEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: editEmployee");
             long employeeId = (long) in.readObject();
@@ -270,6 +365,15 @@ public class Server {
             System.out.println("Got from client (salary): " + salary);
             out.writeObject(controller.editEmployee(employeeId, depName, firstName, lastName, function, salary));
         }
+
+        /**
+         * <p>Метод, изменения отдела
+         * Из входного потока считываются необходимые параметры:
+         * depId - id отдела (тип long)
+         * depName - название отдела (тип String)
+         * directorId - зарплата сотрудника (тип long);
+         * Вызывает метод addEmployee из класса Controller</p>
+         */
         private void editDepartment() throws IOException, ClassNotFoundException {
             System.out.println("Started method: editDepartment");
             long departmentId = (long) in.readObject();
