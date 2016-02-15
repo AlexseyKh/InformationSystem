@@ -260,5 +260,13 @@ public class ControllerToServer implements Controller {
             return -2;
         }
     }
-    
+
+    @Override
+    public void merge(String fileName) {
+        try {
+            objOut.writeObject("merge");
+            objOut.writeObject(fileName);
+        } catch (IOException ex) {
+        }
+    }
 }

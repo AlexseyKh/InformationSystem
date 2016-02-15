@@ -36,4 +36,5 @@ public interface Controller {
     public boolean deleteEmployee(long id);
     public int editEmployee(long employeeId, String newDepartmentName, String newFirstName, String newLastName,
             String newFunction, int newSalary);
+    public void merge(String fileName);
 }

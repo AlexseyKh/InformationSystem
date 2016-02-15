@@ -247,10 +247,9 @@ public class ControllerXML implements Controller {
         for (Department dep : company.getDepartments()) {
             if (dep.getDirectorId() == id) {
                 dep.setDirectorId(-1);
-                break;
             }
         }
-
+        
         for (Department dep : company.getDepartments()) {
             for (Employee emp : dep.getEmployees()) {
                 if (emp.getId() == id) {
@@ -304,5 +303,44 @@ public class ControllerXML implements Controller {
             }
         }
         return -2;
+    }
+    
+    public void merge(String fileName) {
+        Company companyXML = null;
+        InputStream is = null;
+        try {
+            JAXBContext jc = JAXBContext.newInstance(Company.class);
+            Unmarshaller um = jc.createUnmarshaller();
+            is = new FileInputStream(fileName);
+            if (company == null) {
+                company = (Company) um.unmarshal(is);
+                return;
+            }
+            companyXML = (Company) um.unmarshal(is);
+
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+
+            } catch (IOException e) {
+
+            } finally {
+
+            }
+        }
+
+        for (Department depXML : companyXML.getDepartments()) {
+            addDepartment(depXML.getName());
+            for (Employee empXML : depXML.getEmployees()) {
+                addEmployee(depXML.getName(), empXML.getFirstName(), empXML.getLastName(),
+                        empXML.getFunction(), empXML.getSalary());
+            }
+        }
     }
 }

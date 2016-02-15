@@ -6,7 +6,6 @@
 package informationsystem;
 
 import informationsystem.controller.Controller;
-import informationsystem.controller.ControllerXML;
 import informationsystem.controller.ControllerToServer;
 import informationsystem.model.dataClasses.Department;
 import informationsystem.model.dataClasses.Employee;
@@ -36,6 +35,7 @@ public class FrameTable extends JFrame {
     JMenuBar menuBar;
     JMenu menuFile;
     JMenuItem companyCreate;
+    JMenuItem companyMerge;
     JMenuItem companyUpItem;
     JMenuItem companyDownItem;
     Controller con;
@@ -63,12 +63,14 @@ public class FrameTable extends JFrame {
         menuBar = new JMenuBar();
         menuFile = new JMenu("File");
         companyCreate = new JMenuItem("Create");
+        companyMerge = new JMenuItem("Merge");
         companyUpItem = new JMenuItem("Import XML..");
         companyDownItem = new JMenuItem("Export XML..");
         thisFrame = this;
 
         //Компановка
         menuFile.add(companyCreate);
+        menuFile.add(companyMerge);
         menuFile.add(companyUpItem);
         menuFile.add(companyDownItem);
         menuBar.add(menuFile);
@@ -167,6 +169,19 @@ public class FrameTable extends JFrame {
                 }
             }
         });
+        
+        companyMerge.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser f = new JFileChooser();
+                f.setMultiSelectionEnabled(false);
+                f.showDialog(null, "Merge ");
+                con.merge(f.getSelectedFile().getPath());
+                createDepartmentTable();
+                createEmployeeTable(-1);
+
+            }
+        });
 
         companyNamePanel = new JPanel(new GridLayout(1, 1));
         companyName = new JLabel("Company name: ...");
@@ -216,6 +231,8 @@ public class FrameTable extends JFrame {
             public void tableButtonClicked(int row, int col) {
                 long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
                 new EmployeeEditFrame(con, con.getEmployee(id), (FrameTable) thisFrame);
+                createDepartmentTable();
+                createEmployeeTable(currdep);
             }
         });
         tcEditEmp.setCellEditor(editEmp);
@@ -252,6 +269,8 @@ public class FrameTable extends JFrame {
             public void tableButtonClicked(int row, int col) {
                 Department d = con.getDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
                 new EditDepartmentFrame(con, d, (FrameTable) thisFrame);
+                createDepartmentTable();
+                createEmployeeTable(-1);
             }
         });
         tcEditDep.setCellEditor(editDep);
