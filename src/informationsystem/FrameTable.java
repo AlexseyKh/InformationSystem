@@ -219,6 +219,7 @@ public class FrameTable extends JFrame {
                 long id = Long.valueOf((String) employeeTable.getModel().getValueAt(row, 0));
                 con.deleteEmployee(id);
                 ((DefaultTableModel) employeeTable.getModel()).removeRow(row);
+                createDepartmentTable();
             }
         });
         tcDelEmp.setCellEditor(delEmp);

@@ -15,7 +15,7 @@ public class Server {
     private static Controller controller = new ControllerXML();
 
     public static void main(String[] args) throws IOException {
-        controller.loadData("ChocolateCorporation");
+        controller.loadData("src\\datas\\ChocolateCorporation");
         ServerSocket ss = new ServerSocket(PORT);
         try {
             while (true) {
@@ -231,7 +231,6 @@ public class Server {
         synchronized private void addDep() throws IOException, ClassNotFoundException {
             System.out.println("Started method: addDep");
             String depName = (String) in.readObject();
-            System.out.println("center");
             out.writeObject(controller.addDepartment(depName));
             System.out.println("Added " + depName);
             System.out.println("End method: addDep");
