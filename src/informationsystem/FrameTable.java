@@ -34,10 +34,10 @@ public class FrameTable extends JFrame {
     JTable employeeTable;
     JMenuBar menuBar;
     JMenu menuFile;
-    JMenuItem companyCreate;
+    //JMenuItem companyCreate;
     JMenuItem companyMerge;
-    JMenuItem companyUpItem;
-    JMenuItem companyDownItem;
+    //JMenuItem companyUpItem;
+    //JMenuItem companyDownItem;
     Controller con;
     JButton addDep;
     JButton addEmp;
@@ -50,6 +50,7 @@ public class FrameTable extends JFrame {
     long currdep = -1;
 
     public FrameTable() throws IOException {
+        con = new ControllerToServer(PORT);
         //Инициализация
         departmentPanel = new JPanel(new GridBagLayout());
         chgDepartmentPanel = new JPanel(new GridLayout(1, 3));
@@ -62,17 +63,17 @@ public class FrameTable extends JFrame {
         employeeTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         menuBar = new JMenuBar();
         menuFile = new JMenu("File");
-        companyCreate = new JMenuItem("Create");
+        //companyCreate = new JMenuItem("Create");
         companyMerge = new JMenuItem("Merge");
-        companyUpItem = new JMenuItem("Import XML..");
-        companyDownItem = new JMenuItem("Export XML..");
+        //companyUpItem = new JMenuItem("Import XML..");
+        //companyDownItem = new JMenuItem("Export XML..");
         thisFrame = this;
 
         //Компановка
-        menuFile.add(companyCreate);
+        //menuFile.add(companyCreate);
         menuFile.add(companyMerge);
-        menuFile.add(companyUpItem);
-        menuFile.add(companyDownItem);
+        //menuFile.add(companyUpItem);
+        //menuFile.add(companyDownItem);
         menuBar.add(menuFile);
         JScrollPane jspD = new JScrollPane(departmentTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         JScrollPane jspE = new JScrollPane(employeeTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -102,7 +103,6 @@ public class FrameTable extends JFrame {
                 }
             }
         });
-        addDep.setEnabled(false);
         chgDepartmentPanel.add(addDep);
         departmentPanel.add(chgDepartmentPanel);
         employeePanel.add(jspE, table);
@@ -129,47 +129,47 @@ public class FrameTable extends JFrame {
         tabbedPane.addTab(DEPARTMENT, departmentPanel);
         tabbedPane.addTab(EMPLOYEE, employeePanel);
         //События
-        companyUpItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        /*companyUpItem.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
 
-                boolean res = false;
-                JFileChooser f = new JFileChooser();
-                f.setMultiSelectionEnabled(false);
-                f.showDialog(null, "Open ");
-                con = new ControllerToServer(PORT);
-                con.loadData(f.getSelectedFile().getPath());
-                createDepartmentTable();
-                createEmployeeTable(-1);
+         boolean res = false;
+         JFileChooser f = new JFileChooser();
+         f.setMultiSelectionEnabled(false);
+         f.showDialog(null, "Open ");
+         con = new ControllerToServer(PORT);
+         con.loadData(f.getSelectedFile().getPath());
+         createDepartmentTable();
+         createEmployeeTable(-1);
 
-            }
-        });
-        companyDownItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                JFileChooser f = new JFileChooser("Save as..");
-                f.showSaveDialog(null);
-                con.saveData(f.getSelectedFile().getPath());
+         }
+         });
+         companyDownItem.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent ae) {
+         JFileChooser f = new JFileChooser("Save as..");
+         f.showSaveDialog(null);
+         con.saveData(f.getSelectedFile().getPath());
 
-            }
-        });
-        companyCreate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                String s = JOptionPane.showInputDialog("Enter a name for company");
-                if (!"".equals(s)) {
-                    con = new ControllerToServer(PORT);
-                    con.createCompany(s);
-                    companyName.setText("Company name: " + s);
-                    addDep.setEnabled(true);
-                    createEmployeeTable(-1);
-                    createDepartmentTable();
-                } else {
-                    JOptionPane.showMessageDialog(rootPane, "Error name");
-                }
-            }
-        });
-        
+         }
+         });
+         companyCreate.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent ae) {
+         String s = JOptionPane.showInputDialog("Enter a name for company");
+         if (!"".equals(s)) {
+         con = new ControllerToServer(PORT);
+         con.createCompany(s);
+         companyName.setText("Company name: " + s);
+         addDep.setEnabled(true);
+         createEmployeeTable(-1);
+         createDepartmentTable();
+         } else {
+         JOptionPane.showMessageDialog(rootPane, "Error name");
+         }
+         }
+         });*/
+
         companyMerge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -184,7 +184,7 @@ public class FrameTable extends JFrame {
         });
 
         companyNamePanel = new JPanel(new GridLayout(1, 1));
-        companyName = new JLabel("Company name: ...");
+        companyName = new JLabel("Company name: ChocolateCorporation");
 
         companyNamePanel.add(companyName);
         Box globalPanel = new Box(BoxLayout.Y_AXIS);
@@ -198,12 +198,13 @@ public class FrameTable extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("Information System");
         this.setVisible(true);
-
+        createDepartmentTable();
+        createEmployeeTable(-1);
     }
 
     public void createEmployeeTable(long id) {
         DefaultTableModel empModel = new DefaultTableModel(new String[]{"ID", "Name", "Surname", "Function", "Salary"}, 0);
-        Employee[] emps = (id == -1)? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
+        Employee[] emps = (id == -1) ? con.getAllEmployees() : con.getEmployeesOfDepartment(id);
         for (Employee emp : emps) {
             empModel.addRow(new String[]{String.valueOf(emp.getId()), emp.getFirstName(), emp.getLastName(), emp.getFunction(), String.valueOf(emp.getSalary())});
         }
@@ -267,7 +268,7 @@ public class FrameTable extends JFrame {
         editDep.addTableButtonListener(new TableButtonListener() {
             @Override
             public void tableButtonClicked(int row, int col) {
-                Department d = con.getDepartment(Long.valueOf((String)departmentTable.getModel().getValueAt(row, 0)));
+                Department d = con.getDepartment(Long.valueOf((String) departmentTable.getModel().getValueAt(row, 0)));
                 new EditDepartmentFrame(con, d, (FrameTable) thisFrame);
                 createDepartmentTable();
                 createEmployeeTable(-1);
