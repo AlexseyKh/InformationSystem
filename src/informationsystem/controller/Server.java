@@ -12,10 +12,10 @@ import java.net.Socket;
 public class Server {
 
     public static final int PORT = 7777;
-    private static Controller controller = new ControllerXML();
+    private static Controller con = new ControllerlXML();
 
     public static void main(String[] args) throws IOException {
-        controller.loadData("src\\datas\\ChocolateCorporation");
+        con.loadData("src\\datas\\ChocolateCorporation");
         ServerSocket ss = new ServerSocket(PORT);
         try {
             while (true) {
@@ -115,9 +115,17 @@ public class Server {
                     if (str.equals("merge")) {
                         merge();
                     }
+                    if(str.equals("getLastAddedEmployee")){
+                        getLastAddedEmployee();
+                    }
                     if (str.equals("end")) {
+                        out.close();
+                        in.close();
+                        s.close();
+                        con.saveData("src\\datas\\ChocolateCorporation");
                         return;
                     }
+                    
                     //out.flush();}
                 }
             } catch (ClassNotFoundException | IOException e) {
@@ -139,7 +147,7 @@ public class Server {
          */
         synchronized private void getAllDepartments() throws IOException {
             System.out.println("Started method: getAllDepartments");
-            Department[] deps = controller.getAllDepartments();
+            Department[] deps = con.getAllDepartments();
             out.writeObject(deps);
         }
 
@@ -151,7 +159,7 @@ public class Server {
         synchronized private void getDepI() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getDepI");
             Long departmentId = (Long) in.readObject();
-            Department dep = controller.getDepartment(departmentId);
+            Department dep = con.getDepartment(departmentId);
             out.writeObject(dep);
         }
 
@@ -161,7 +169,7 @@ public class Server {
          */
         synchronized private void departmentCount() throws IOException {
             System.out.println("Started method: departmentCount");
-            out.writeObject(controller.departmentCount());
+            out.writeObject(con.departmentCount());
         }
 
         /**
@@ -170,7 +178,7 @@ public class Server {
          */
         synchronized private void getCompanyName() throws IOException {
             System.out.println("Started method: getCompanyName");
-            String companyName = controller.getCompanyName();
+            String companyName = con.getCompanyName();
             out.writeObject(companyName);
         }
 
@@ -182,8 +190,8 @@ public class Server {
             System.out.println("Started method: getDepS");
             String departmentName = (String) in.readObject();
             System.out.println("Get department: " + departmentName);
-            System.out.println("First dep - " + controller.getDepartment(0).getName());
-            Department dep = controller.getDepartment(departmentName);
+            System.out.println("First dep - " + con.getDepartment(0).getName());
+            Department dep = con.getDepartment(departmentName);
             System.out.println("Out department: " + dep.getName());
             out.writeObject(dep);
         }
@@ -196,7 +204,7 @@ public class Server {
         synchronized private void createCS() throws IOException, ClassNotFoundException {
             System.out.println("Started method: createCS");
             String companyName = (String) in.readObject();
-            controller.createCompany(companyName);
+            con.createCompany(companyName);
             //out.writeObject("complete");
         }
 
@@ -208,7 +216,7 @@ public class Server {
         synchronized private void createCF() throws IOException, ClassNotFoundException {
             System.out.println("Started method: createCF");
             String fileName = (String) in.readObject();
-            controller.loadData(fileName);
+            con.loadData(fileName);
             //out.writeObject("complete");
         }
 
@@ -220,7 +228,7 @@ public class Server {
         synchronized private void save() throws IOException, ClassNotFoundException {
             System.out.println("Started method: save");
             String fileName = (String) in.readObject();
-            controller.saveData(fileName);
+            con.saveData(fileName);
         }
 
         /**
@@ -231,7 +239,7 @@ public class Server {
         synchronized private void addDep() throws IOException, ClassNotFoundException {
             System.out.println("Started method: addDep");
             String depName = (String) in.readObject();
-            out.writeObject(controller.addDepartment(depName));
+            out.writeObject(con.addDepartment(depName));
             System.out.println("Added " + depName);
             System.out.println("End method: addDep");
             //out.writeObject("complete");
@@ -245,7 +253,7 @@ public class Server {
         synchronized private void delDepI() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delDepI");
             long id = (long) in.readObject();
-            out.writeObject(controller.deleteDepartment(id));
+            out.writeObject(con.deleteDepartment(id));
             //out.writeObject("complete");
         }
 
@@ -257,7 +265,7 @@ public class Server {
         synchronized private void delDepS() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delDepS");
             String depName = (String) in.readObject();
-            out.writeObject(controller.deleteDepartment(depName));
+            out.writeObject(con.deleteDepartment(depName));
             //out.writeObject("complete");
         }
 
@@ -269,7 +277,7 @@ public class Server {
         synchronized private void getEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployee");
             long id = (long) in.readObject();
-            Employee emp = controller.getEmployee(id);
+            Employee emp = con.getEmployee(id);
             out.writeObject(emp);
         }
 
@@ -279,7 +287,7 @@ public class Server {
          */
         synchronized private void getAllEmployees() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getAllEmployees");
-            Employee[] emps = controller.getAllEmployees();
+            Employee[] emps = con.getAllEmployees();
             out.writeObject(emps);
             System.out.println("End method: getAllEmployees");
         }
@@ -292,7 +300,7 @@ public class Server {
         synchronized private void getEmployeesOfDepartmentByName() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentByName");
             String name = (String) in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartment(name);
+            Employee[] depEmps = con.getEmployeesOfDepartment(name);
             out.writeObject(depEmps);
         }
 
@@ -304,7 +312,7 @@ public class Server {
         synchronized private void getEmployeesOfDepartmentById() throws IOException, ClassNotFoundException {
             System.out.println("Started method: getEmployeesOfDepartmentById");
             long id = (long) in.readObject();
-            Employee[] depEmps = controller.getEmployeesOfDepartment(id);
+            Employee[] depEmps = con.getEmployeesOfDepartment(id);
             out.writeObject(depEmps);
         }
 
@@ -330,7 +338,7 @@ public class Server {
             System.out.println("Got from client (function): " + function);
             int salary = (Integer) in.readObject();
             System.out.println("Got from client (salary): " + salary);
-            out.writeObject(controller.addEmployee(depName, firstName, lastName, function, salary));
+            out.writeObject(con.addEmployee(depName, firstName, lastName, function, salary));
             //out.writeObject("complete");
         }
 
@@ -342,7 +350,7 @@ public class Server {
         synchronized private void delEmployee() throws IOException, ClassNotFoundException {
             System.out.println("Started method: delEmployee");
             long employeeId = (long) in.readObject();
-            out.writeObject(controller.deleteEmployee(employeeId));
+            out.writeObject(con.deleteEmployee(employeeId));
             //out.writeObject("complete");
         }
 
@@ -370,7 +378,7 @@ public class Server {
             System.out.println("Got from client (function): " + function);
             int salary = (Integer) in.readObject();
             System.out.println("Got from client (salary): " + salary);
-            out.writeObject(controller.editEmployee(employeeId, depName, firstName, lastName, function, salary));
+            out.writeObject(con.editEmployee(employeeId, depName, firstName, lastName, function, salary));
         }
 
         /**
@@ -389,12 +397,17 @@ public class Server {
             System.out.println("Got from client (depName): " + depName);
             long directorId = (long) in.readObject();
             System.out.println("Got from client (directorId): " + directorId);
-            out.writeObject(controller.editDepartment(departmentId, depName, directorId));
+            out.writeObject(con.editDepartment(departmentId, depName, directorId));
         }
         synchronized private void merge() throws IOException, ClassNotFoundException {
             System.out.println("Started method: merge");
             String fileName = (String) in.readObject();  
-            controller.merge(fileName);
+            con.merge(fileName);
+        }
+        synchronized private void getLastAddedEmployee() throws IOException{
+            System.out.println("Started method: getLastAddedEmployee");
+            Employee emp = con.getLastAddedEmployee();
+            out.writeObject(emp);
         }
     }
 }

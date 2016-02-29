@@ -20,37 +20,48 @@ import java.util.logging.Logger;
  *
  * @author Игорь
  */
-public class ControllerToServer implements Controller {
-    
+public class ControllerToServer{
+
     public int PORT = 7777;
-    public ObjectOutputStream objOut;
-    public ObjectInputStream objIn;
-    
+    private ObjectOutputStream objOut;
+    private ObjectInputStream objIn;
+    private Socket s;
+
     public ControllerToServer(int PORT) {
         try {
             this.PORT = PORT;
             InetAddress addr = InetAddress.getLocalHost();
-            Socket s = new Socket(addr, PORT);
+            s = new Socket(addr, PORT);
             objOut = new ObjectOutputStream(s.getOutputStream());
             objIn = new ObjectInputStream(s.getInputStream());
         } catch (IOException ex) {
             Logger.getLogger(ControllerToServer.class.getName()).log(Level.SEVERE, null, ex);
-        
+
         }
     }
     
-    @Override
-    public void createCompany(String name) {
+    public void closeConnection(){
         try {
-            objOut.writeObject("createCS");
-            objOut.writeObject(name);
-            
+            objOut.writeObject("end");
+            objOut.flush();
+            objIn.close();
+            objOut.close();
+            s.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
-    @Override
+
+    public void createCompany(String name) {
+        try {
+            objOut.writeObject("createCS");
+            objOut.writeObject(name);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void loadData(String fileName) {
         try {
             objOut.writeObject("createCF");
@@ -59,8 +70,7 @@ public class ControllerToServer implements Controller {
             e1.printStackTrace();
         }
     }
-    
-    @Override
+
     public void saveData(String fileName) {
         try {
             objOut.writeObject("save");
@@ -69,23 +79,25 @@ public class ControllerToServer implements Controller {
             e.printStackTrace();
         }
     }
-    
-    @Override
+
     public String getCompanyName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            objOut.writeObject("getCompanyName");
+            return (String) objIn.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } 
     }
-    
-    @Override
+
     public void setCompanyName(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    @Override
+
     public int departmentCount() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    @Override
+
     public Department getDepartment(long id) {
         try {
             objOut.writeObject("getDepI");
@@ -96,8 +108,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public Department getDepartment(String name) {
         try {
             objOut.writeObject("getDepS");
@@ -108,8 +119,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public Department[] getAllDepartments() {
         try {
             objOut.writeObject("getAllDepartments");
@@ -118,21 +128,19 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public boolean addDepartment(String name) {
         try {
             objOut.writeObject("addDep");
             objOut.writeObject(name);
             return (boolean) objIn.readObject();
-            
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
-    @Override
+
     public boolean deleteDepartment(long id) {
         try {
             objOut.writeObject("delDepI");
@@ -143,8 +151,7 @@ public class ControllerToServer implements Controller {
             return false;
         }
     }
-    
-    @Override
+
     public boolean deleteDepartment(String name) {
         try {
             objOut.writeObject("delDepS");
@@ -155,8 +162,8 @@ public class ControllerToServer implements Controller {
             return false;
         }
     }
-    
-    public int editDepartment(long departmentId, String newName, long newDirectorId){
+
+    public int editDepartment(long departmentId, String newName, long newDirectorId) {
         try {
             objOut.writeObject("editDepartment");
             objOut.writeObject(departmentId);
@@ -167,13 +174,11 @@ public class ControllerToServer implements Controller {
             return -2;
         }
     }
-    
-    @Override
+
     public int employeeCount() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    @Override
+
     public Employee getEmployee(long id) {
         try {
             objOut.writeObject("getEmployee");
@@ -184,8 +189,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public Employee[] getAllEmployees() {
         try {
             objOut.writeObject("getAllEmployees");
@@ -194,8 +198,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public Employee[] getEmployeesOfDepartment(long id) {
         try {
             objOut.writeObject("getEmployeesOfDepartmentById");
@@ -205,8 +208,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public Employee[] getEmployeesOfDepartment(String name) {
         try {
             objOut.writeObject("getEmployeesOfDepartmentByName");
@@ -216,8 +218,7 @@ public class ControllerToServer implements Controller {
             return null;
         }
     }
-    
-    @Override
+
     public int addEmployee(String departmentName, String firstName, String lastName, String function, int salary) {
         try {
             objOut.writeObject("addEmployee");
@@ -231,8 +232,7 @@ public class ControllerToServer implements Controller {
             return -2;
         }
     }
-    
-    @Override
+
     public boolean deleteEmployee(long id) {
         try {
             objOut.writeObject("deleteEmployee");
@@ -243,8 +243,7 @@ public class ControllerToServer implements Controller {
             return false;
         }
     }
-    
-    @Override
+
     public int editEmployee(long employeeId, String newDepartmentName,
             String newFirstName, String newLastName, String newFunction, int newSalary) {
         try {
@@ -261,12 +260,20 @@ public class ControllerToServer implements Controller {
         }
     }
 
-    @Override
     public void merge(String fileName) {
         try {
             objOut.writeObject("merge");
             objOut.writeObject(fileName);
         } catch (IOException ex) {
+        }
+    }
+
+    public Employee getLastAddedEmployee() {
+        try {
+            objOut.writeObject("getLastAddedEmployee");
+            return (Employee) objIn.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            return null;
         }
     }
 }

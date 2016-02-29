@@ -28,6 +28,7 @@ public interface Controller {
     public int editDepartment(long departmentId, String newName, long newDirectorId);
     public int employeeCount();
     public Employee getEmployee(long id);
+    public Employee getLastAddedEmployee();
     public Employee[] getAllEmployees();
     public Employee[] getEmployeesOfDepartment(long id);
     public Employee[] getEmployeesOfDepartment(String name);
